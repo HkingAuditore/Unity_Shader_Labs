@@ -7,7 +7,8 @@
         _MainTex ("Main Texture", 2D) = "white" {}
 
         // _MainColor("Main Color", Color) = (1,1,1,1)
-        _EdgeColor("Edge Color", Color) = (1,1,1,1)
+        [HDR]_EdgeColor("Edge Color", Color) = (1,1,1,1)
+        [HDR]_OutsideColor("Outside Color", Color) = (1,1,1,1)
 
         _Speed("Speed", Range(-5,5)) = 1
         // _Offset("Offset", Range(-2,2)) = 1
@@ -17,7 +18,7 @@
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags { "RenderType"="Transparent" "Queue" = "Transparent" "IgnoreProjector" = "True" "ForceNoShadowCasting" = "True"}
         LOD 100
         Blend SrcAlpha OneMinusSrcAlpha
 
@@ -94,17 +95,19 @@
                 fixed4 cybercol = tex2D(_CyberTex, scrollProject);
 
                 fixed alpha = 1;
+                alpha -= i.objectPos.x;
                 if(cybercol.r + cybercol.g + cybercol.b < 1){
                     alpha = 0; 
                     col = max(cybercol,col);
                 } 
 
+
                 //边缘光
                 fixed edge = pow(i.VdotN, 1) / _Range;
 	            edge = edge > _OutlineThred ? 1 : edge;   
                 edge = 1 - edge;       
-                // 小于thred的部分视为边缘
-	            fixed4 edgeCol = pow(edge, 0.1) * fixed4(_EdgeColor.rgb,edge);
+                //小于thred的部分视为边缘
+	            fixed4 edgeCol = pow(edge, 0.1) * fixed4(_EdgeColor.rgb + fixed3(0.3,0.3,0.5) * (sin(_Time.y * 3)+1)*0.5,edge);
                //边缘颜色处理
                 col = col*(1-edgeCol.a)+edgeCol*edgeCol.a;
                    
@@ -150,6 +153,8 @@
             sampler2D _MainTex;
             float4 _MainTex_ST;
 
+            float4 _OutsideColor;
+
             // fixed4 _MainColor;
             fixed _Speed;
             fixed _Offset;
@@ -184,6 +189,7 @@
                     col = min(cybercol,col);
                 } 
 
+                col *= _OutsideColor;
 
                    
 
@@ -224,6 +230,8 @@
             sampler2D _CyberTexBack;
             float4 _CyberTexBack_ST;
             float4 _CyberTexBack_TexelSize;
+            float4 _OutsideColor;
+
 
             sampler2D _MainTex;
             float4 _MainTex_ST;
@@ -262,6 +270,7 @@
                     alpha = 0; 
                     col = min(cybercol,col);
                 } 
+                col *= _OutsideColor;
 
 
                    
