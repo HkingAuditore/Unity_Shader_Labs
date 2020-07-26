@@ -6,12 +6,10 @@
         _CyberTexBack ("Cyber Texture Back", 2D) = "white" {}
         _MainTex ("Main Texture", 2D) = "white" {}
 
-        // _MainColor("Main Color", Color) = (1,1,1,1)
         [HDR]_EdgeColor("Edge Color", Color) = (1,1,1,1)
         [HDR]_OutsideColor("Outside Color", Color) = (1,1,1,1)
 
         _Speed("Speed", Range(-5,5)) = 1
-        // _Offset("Offset", Range(-2,2)) = 1
         _OutlineThred("OutlineThred", Range(0,1)) = 0.5
         _Range("Range", Range(0,2)) = 1
         _Size("Size", Range(0,1)) = 0.5

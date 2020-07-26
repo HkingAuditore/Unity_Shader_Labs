@@ -237,7 +237,7 @@ Shader "Unlit/Outline"
                     mul(unity_WorldToObject, 
                     float4(_WorldSpaceCameraPos.xyz, 1)).xyz - v.vertex);
 				o.VdotN = dot(normalize(viewDir),v.normal);
-                 o.worldNormal = mul(v.normal, (float3x3)unity_WorldToObject);  
+                o.worldNormal = mul(v.normal, (float3x3)unity_WorldToObject);  
 				UNITY_TRANSFER_FOG(o,o.vertex);
 				return o;
 

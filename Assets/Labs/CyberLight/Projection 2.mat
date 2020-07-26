@@ -24,11 +24,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _CyberTex:
-        m_Texture: {fileID: 2800000, guid: 4583e5b9998733b47ac840b767378ab4, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _CyberTexBack:
-        m_Texture: {fileID: 2800000, guid: c62bbd934946a424a8ad2eb4be3a7576, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -81,8 +81,8 @@ Material:
     - _Offset: 0.51
     - _OutlineThred: 1
     - _Parallax: 0.02
-    - _Range: 0.791
-    - _Size: 0.03
+    - _Range: 0.69
+    - _Size: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _Speed: 2.11
@@ -91,7 +91,7 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _EdgeColor: {r: 0, g: 0.80043, b: 1.4980392, a: 1}
+    - _EdgeColor: {r: 5.992157, g: 0, b: 0.8687712, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _MainColor: {r: 0.43137264, g: 0, b: 1, a: 1}
     - _OutsideColor: {r: 0.2423886, g: 0.7100962, b: 0.72375184, a: 1}
