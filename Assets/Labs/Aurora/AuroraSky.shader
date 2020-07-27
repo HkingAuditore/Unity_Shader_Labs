@@ -27,6 +27,12 @@ Shader "Aurora/AuroraSky"
         [HDR]_AuroraColor ("Aurora Color", Color) = (1,1,1,0)
         _AuroraIntensity("Aurora Intensity", Range(0,1)) = 0.5
         _AuroraSpeed("AuroraSpeed", Range(0,1)) = 0.5
+        _SurAuroraColFactor("Sur Aurora Color Factor", Range(0,1)) = 0.5
+
+        [Header(Envirment Setting)]
+        [HDR]_MountainColor ("Mountain Color", Color) = (1,1,1,0)
+        _MountainFactor("Mountain Factor", Range(0,1)) = 0.5
+        _MountainHeight("Mountain Height", Range(0,2)) = 0.5
 
     }
 
@@ -63,6 +69,11 @@ Shader "Aurora/AuroraSky"
     half4 _AuroraColor;
     half _AuroraIntensity;
     half _AuroraSpeed;
+    half _SurAuroraColFactor;
+    
+    half4 _MountainColor;
+    float _MountainFactor;
+    half _MountainHeight;
 
 
     half _Intensity;
@@ -112,8 +123,8 @@ Shader "Aurora/AuroraSky"
     }
 
     // 星云噪声
-    float CloudNoise (float2 st) {
-        st += float2(0,_Time.y*_CloudSpeed);
+    float CloudNoise (float2 st,int flow) {
+        st += float2(0,_Time.y*_CloudSpeed*flow);
 
         float2 i = floor(st);
         float2 f = frac(st);
@@ -132,15 +143,14 @@ Shader "Aurora/AuroraSky"
     }
 
     // 星云分型
-    float Cloudfbm (float2 st) {
-        // Initial values
+    float Cloudfbm (float2 st,int flow) {
+
         float value = 0.0;
         float amplitude = .5;
         float frequency = 0.;
-        //
-        // Loop of octaves
+
         for (int i = 0; i < 6; i++) {
-            value += amplitude * CloudNoise(st);
+            value += amplitude * CloudNoise(st,flow);
             st *= 2.;
             amplitude *= .5;
         }
@@ -186,19 +196,89 @@ Shader "Aurora/AuroraSky"
     }
 
 
+    //带状极光
+    float2x2 mm2(float a){
+        float c = cos(a);
+        float s = sin(a);
+        return float2x2(c,s,-s,c);
+    }
+
+    float tri(float x){
+        return clamp(abs(frac(x)-.5),0.01,0.49);
+    }
+
+    float2 tri2(float2 p){
+        return float2(tri(p.x)+tri(p.y),tri(p.y+tri(p.x)));
+    }
+
+    float triNoise2d(float2 p, float spd)
+    {
+        float z=1.8;
+        float z2=2.5;
+    	float rz = 0.;
+        p = mul(mm2(p.x*0.06),p);
+        float2 bp = p;
+    	for (float i=0.; i<5.; i++ )
+    	{
+            float2 dg = tri2(bp*1.85)*.75;
+            dg = mul(mm2(_Time.y*_AuroraSpeed),dg);
+            p -= dg/z2;
+
+            bp *= 1.3;
+            z2 *= .45;
+            z *= .42;
+    		p *= 1.21 + (rz-1.0)*.02;
+
+            rz += tri(p.x+tri(p.y))*z;
+            p = mul(-float2x2(0.95534, 0.29552, -0.29552, 0.95534),p);
+    	}
+        return clamp(1./pow(rz*29., 1.3),0.,.55);
+    }
+
+    float SurHash(float2 n){
+         return frac(sin(dot(n, float2(12.9898, 4.1414))) * 43758.5453); 
+    }
+
+    float4 SurAurora(float3 pos,float3 ro, float3 rd)
+    {
+        float4 col = float4(0,0,0,0);
+        float4 avgCol = float4(0,0,0,0);
+
+        for(float i=0.;i<50.;i++)
+        {
+            float of = 0.006*SurHash(pos.xy)*smoothstep(0.,15., i);
+            float pt = ((.8+pow(i,1.4)*.002)-ro.y)/(rd.y*2.+0.4);
+            pt -= of;
+        	float3 bpos = ro + pt*rd;
+            float2 p = bpos.zx;
+            float rzt = triNoise2d(p, 0.06);
+            float4 col2 = float4(0,0,0, rzt);
+            col2.rgb = (sin(1.-float3(2.15,-.5, 1.2)+i*_SurAuroraColFactor*0.1)*0.5+0.5)*rzt;
+            avgCol =  lerp(avgCol, col2, .5);
+            col += avgCol*exp2(-i*0.065 - 2.5)*smoothstep(0.,5., i);
+
+        }
+
+        col *= (clamp(rd.y*15.+.4,0.,1.));
+
+        return col*1.8;
+
+    }
+
+
     half4 frag (v2f i) : COLOR
     {
         float p = normalize(i.texcoord).y;
         float p1 = 1.0f - pow (min (1.0f, 1.0f - p), _Exponent1);
         float p3 = 1.0f - pow (min (1.0f, 1.0f + p), _Exponent2);
         float p2 = 1.0f - p1 - p3;
-
+        int reflection = i.texcoord.y < 0 ? -1 : 1;
         // 星云
-        float cloud = Cloudfbm(i.texcoord.xz * 8);
+        float cloud = Cloudfbm(fixed2(i.texcoord.x,i.texcoord.z) * 8,1);
         float4 cloudCol = float4(cloud * _CloudColor.rgb,cloud*0.8);
 
         // 星星
-        float star  =StarNoise(i.texcoord.xyz * 64);
+        float star  =StarNoise(fixed3(i.texcoord.x,i.texcoord.y * reflection,i.texcoord.z) * 64);
         float4 starOriCol = float4(_StarColor.r + 3.25*sin(i.texcoord.x) + 2.45 * (sin(_Time.y * _StarSpeed) + 1)*0.5,
                                    _StarColor.g + 3.85*sin(i.texcoord.y) + 1.45 * (sin(_Time.y * _StarSpeed) + 1)*0.5,
                                    _StarColor.b + 3.45*sin(i.texcoord.z) + 4.45 * (sin(_Time.y * _StarSpeed) + 1)*0.5,
@@ -207,10 +287,11 @@ Shader "Aurora/AuroraSky"
 
         float4 starCol = fixed4((starOriCol * star).rgb,star);
 
-
+        //带状极光
+        float4 surAuroraCol = smoothstep(0.,1.5,SurAurora(float3(i.texcoord.x,abs(i.texcoord.y),i.texcoord.z),float3(0,0,-6.7),float3(i.texcoord.x,abs(i.texcoord.y),i.texcoord.z))) + (reflection-1)*-0.2*0.5;
 
         //极光
-        float aurora = GetAurora(i.texcoord.xyz);
+        float aurora = GetAurora(fixed3(i.texcoord.x,i.texcoord.y * reflection,i.texcoord.z) );
         float3 boreal = float3 (_AuroraColor.rgb  * GetAurora(float3(i.texcoord.xy*float2(1.2,1.), _Time.y*_AuroraSpeed*0.22)) * .9  +
                         _AuroraColor.rgb * GetAurora(float3(i.texcoord.xy*float2(1.,.7)  , _Time.y*_AuroraSpeed*0.27)) *  .9 +
                         _AuroraColor.rgb * GetAurora(float3(i.texcoord.xz*float2(.8,.6)  , _Time.y*_AuroraSpeed*0.29)) *  .5 +
@@ -218,11 +299,36 @@ Shader "Aurora/AuroraSky"
         float4 auroraCol = float4(boreal,aurora*0.8);
 
 
+        // 远处山脉
 
+        float mountain = Cloudfbm(fixed2(lerp(0,1,(i.texcoord.x+1)/2),0.412436) * 10,0);
+        mountain = (smoothstep(0,(Cloudfbm(fixed2(lerp(0,1,(i.texcoord.x+1)/2),0.412436) * 10,0)),mountain)) * mountain *1.8 - _MountainHeight;
+        int mount = (abs(i.texcoord.y) < mountain * 0.15) ? 1 : 0;
+
+        float4 mountainCol = fixed4(_MountainColor.rgb,mount);
+
+        
+
+        //最终混合
         float4 skyCol = (_Color1 * p1 + _Color2 * p2 + _Color3 * p3) * _Intensity;
+        starCol = reflection==1?starCol:starCol*0.5;
         skyCol = skyCol*(1 - starCol.a) + starCol * starCol.a;
         skyCol = skyCol*(1 - cloudCol.a) + cloudCol * cloudCol.a;
+        skyCol = skyCol*(1 - surAuroraCol.a) + surAuroraCol * surAuroraCol.a;
         skyCol = skyCol*(1 - auroraCol.a) + auroraCol * auroraCol.a;
+        skyCol = skyCol*(1 - mountainCol.a) + mountainCol * mountainCol.a;
+
+        // 计算反射
+        if(reflection == -1){
+            float re = Cloudfbm(fixed2(i.texcoord.y,i.texcoord.z) * 8,1);
+            skyCol.rgb *= (lerp(.35,1.12,re) - 0.1) ;
+            float4 reCol = fixed4(skyCol.rgb - re*0.085,re*0.05);
+            skyCol = skyCol*(1 - reCol.a) + reCol * reCol.a;
+            skyCol+=_Color2 * p2 * 0.2;
+
+        }
+
+
         return skyCol;
 
     }

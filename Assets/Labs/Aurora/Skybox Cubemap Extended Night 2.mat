@@ -78,7 +78,7 @@ Material:
     m_Floats:
     - _Advancedd: 1
     - _AuroraIntensity: 0.5
-    - _AuroraSpeed: 0.95
+    - _AuroraSpeed: 0.29
     - _BumpScale: 1
     - _CUBEMAPP: 1
     - _CloudIntensity: 0.45
@@ -89,8 +89,8 @@ Material:
     - _DstBlend: 0
     - _EnableFog: 1
     - _EnableRotation: 1
-    - _Exponent1: 2.31
-    - _Exponent2: 3.03
+    - _Exponent1: 5.39
+    - _Exponent2: 3.48
     - _Exposure: 0.51
     - _Float0: 0
     - _FogFill: 0
@@ -101,11 +101,13 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _Intensity: 1.13
+    - _Intensity: 1.45
     - _IsStandardPipeline: 1
     - _IsStandardRP: 1
     - _Metallic: 0
     - _Mode: 0
+    - _MountainFactor: 0.5
+    - _MountainHeight: 0.56
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _Prop1: 0
@@ -118,17 +120,19 @@ Material:
     - _SrcBlend: 1
     - _StarIntensity: 0.36
     - _StarSpeed: 0.31
+    - _SurAuroraColFactor: 0.6
     - _UVSec: 0
     - _ZWrite: 1
     - __dirty: 0
     m_Colors:
-    - _AuroraColor: {r: 0.95606256, g: 0.5801887, b: 1, a: 1}
-    - _CloudColor: {r: 0.103462085, g: 0.26444924, b: 0.2924528, a: 0}
+    - _AuroraColor: {r: 1.6659949, g: 1.0105215, b: 1.7411011, a: 1}
+    - _CloudColor: {r: 0.13453807, g: 0.34669426, b: 0.38809058, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Color1: {r: 0.005206492, g: 0.0071959, b: 0.009433985, a: 0}
     - _Color2: {r: 0.16820931, g: 0.213019, b: 0.33962262, a: 0}
     - _Color3: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _MountainColor: {r: 0.014368421, g: 0.026342107, b: 0.091000006, a: 0}
     - _StarColor: {r: 3.3582203, g: 3.8139002, b: 23.756304, a: 1}
     - _Tex_HDR: {r: 1, g: 1, b: 0, a: 0}
     - _TintColor: {r: 0.1792453, g: 0.1792453, b: 0.1792453, a: 1}
