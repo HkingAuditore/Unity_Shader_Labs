@@ -89,7 +89,7 @@ Shader "Aurora/AuroraSky"
     }
 
     // 星空噪声
-    float Noise(float3 st){
+    float StarNoise(float3 st){
         st += float3(0,_Time.y*_StarSpeed,0);
 
         float3 i = floor(st) ;
@@ -104,8 +104,8 @@ Shader "Aurora/AuroraSky"
     }
 
 
-    // 星云随机 
-    float random (float2 st) {
+    // 星云散列哈希
+    float CloudHash (float2 st) {
         return frac(sin(dot(st.xy,
                          float2(12.9898,78.233)))*
         43758.5453123);
@@ -119,10 +119,10 @@ Shader "Aurora/AuroraSky"
         float2 f = frac(st);
 
         
-        float a = random(i);
-        float b = random(i + float2(1.0, 0.0));
-        float c = random(i + float2(0.0, 1.0));
-        float d = random(i + float2(1.0, 1.0));
+        float a = CloudHash(i);
+        float b = CloudHash(i + float2(1.0, 0.0));
+        float c = CloudHash(i + float2(0.0, 1.0));
+        float d = CloudHash(i + float2(1.0, 1.0));
 
         float2 u = f * f * (3.0 - 2.0 * f);
 
@@ -132,7 +132,7 @@ Shader "Aurora/AuroraSky"
     }
 
     // 星云分型
-    float fbm (float2 st) {
+    float Cloudfbm (float2 st) {
         // Initial values
         float value = 0.0;
         float amplitude = .5;
@@ -164,7 +164,7 @@ Shader "Aurora/AuroraSky"
         return res;
     }
     //极光分型
-    float fbm2(float3 p )
+    float Aurorafbm(float3 p )
     {
         float f  = 0.50000*AuroraNoise( p ); 
         p *= 2.02;
@@ -179,8 +179,8 @@ Shader "Aurora/AuroraSky"
     }
     float GetAurora(float3 p)
     {
-    	p+=fbm2(float3(p.x,p.y,0.0)*0.5)*2.25;
-    	float a = smoothstep(.0, .9, fbm2(p*2.)*2.2-1.1);
+    	p+=Aurorafbm(float3(p.x,p.y,0.0)*0.5)*2.25;
+    	float a = smoothstep(.0, .9, Aurorafbm(p*2.)*2.2-1.1);
 
     	return a<0.0 ? 0.0 : a;
     }
@@ -194,11 +194,11 @@ Shader "Aurora/AuroraSky"
         float p2 = 1.0f - p1 - p3;
 
         // 星云
-        float cloud = fbm(i.texcoord.xz * 8);
+        float cloud = Cloudfbm(i.texcoord.xz * 8);
         float4 cloudCol = float4(cloud * _CloudColor.rgb,cloud*0.8);
 
         // 星星
-        float star  = Noise(i.texcoord.xyz * 64);
+        float star  =StarNoise(i.texcoord.xyz * 64);
         float4 starOriCol = float4(_StarColor.r + 3.25*sin(i.texcoord.x) + 2.45 * (sin(_Time.y * _StarSpeed) + 1)*0.5,
                                    _StarColor.g + 3.85*sin(i.texcoord.y) + 1.45 * (sin(_Time.y * _StarSpeed) + 1)*0.5,
                                    _StarColor.b + 3.45*sin(i.texcoord.z) + 4.45 * (sin(_Time.y * _StarSpeed) + 1)*0.5,
