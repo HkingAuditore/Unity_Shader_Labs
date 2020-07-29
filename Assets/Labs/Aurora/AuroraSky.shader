@@ -54,31 +54,37 @@ Shader "Aurora/AuroraSky"
         float3 normal : TEXCOORD1;
     };
     
+    // 环境背景颜色
     half4 _Color1;
     half4 _Color2;
     half4 _Color3;
+    half _Intensity;
+    half _Exponent1;
+    half _Exponent2;
 
+
+    //星星 
     half4 _StarColor;
     half _StarIntensity;
     half _StarSpeed;
 
+    // 云
     half4 _CloudColor;
     half _CloudIntensity;
     half _CloudSpeed;
 
+    // 极光
     half4 _AuroraColor;
     half _AuroraIntensity;
     half _AuroraSpeed;
     half _SurAuroraColFactor;
     
+    // 远景山
     half4 _MountainColor;
     float _MountainFactor;
     half _MountainHeight;
 
 
-    half _Intensity;
-    half _Exponent1;
-    half _Exponent2;
     
     v2f vert (appdata v)
     {
@@ -92,7 +98,7 @@ Shader "Aurora/AuroraSky"
     
     // 星空散列哈希
     float StarAuroraHash(float3 x) {
-	    float3 p = float3( dot(x,float3(214.1 ,127.7,125.4)),
+	    float3 p = float3(dot(x,float3(214.1 ,127.7,125.4)),
 			        dot(x,float3(260.5,183.3,954.2)),
                     dot(x,float3(209.5,571.3,961.2)) );
 
@@ -101,9 +107,11 @@ Shader "Aurora/AuroraSky"
 
     // 星空噪声
     float StarNoise(float3 st){
+        // 卷动星空
         st += float3(0,_Time.y*_StarSpeed,0);
 
-        float3 i = floor(st) ;
+        // fbm
+        float3 i = floor(st);
         float3 f = frac(st);
     
 	    float3 u = f*f*(3.0-1.0*f);
@@ -115,21 +123,21 @@ Shader "Aurora/AuroraSky"
     }
 
 
-    // 星云散列哈希
+    // 云散列哈希
     float CloudHash (float2 st) {
         return frac(sin(dot(st.xy,
                          float2(12.9898,78.233)))*
         43758.5453123);
     }
 
-    // 星云噪声
+    // 云噪声
     float CloudNoise (float2 st,int flow) {
+        // 云卷动
         st += float2(0,_Time.y*_CloudSpeed*flow);
 
         float2 i = floor(st);
         float2 f = frac(st);
 
-        
         float a = CloudHash(i);
         float b = CloudHash(i + float2(1.0, 0.0));
         float c = CloudHash(i + float2(0.0, 1.0));
@@ -196,8 +204,10 @@ Shader "Aurora/AuroraSky"
     }
 
 
-    //带状极光
-    float2x2 mm2(float a){
+    /**************带状极光***************/
+
+    // 旋转矩阵
+    float2x2 RotateMatrix(float a){
         float c = cos(a);
         float s = sin(a);
         return float2x2(c,s,-s,c);
@@ -211,17 +221,18 @@ Shader "Aurora/AuroraSky"
         return float2(tri(p.x)+tri(p.y),tri(p.y+tri(p.x)));
     }
 
-    float triNoise2d(float2 p, float spd)
+    // 极光分布噪声图
+    float triNoise2d(float2 p)
     {
         float z=1.8;
         float z2=2.5;
     	float rz = 0.;
-        p = mul(mm2(p.x*0.06),p);
+        p = mul(RotateMatrix(p.x*0.06),p);
         float2 bp = p;
     	for (float i=0.; i<5.; i++ )
     	{
             float2 dg = tri2(bp*1.85)*.75;
-            dg = mul(mm2(_Time.y*_AuroraSpeed),dg);
+            dg = mul(RotateMatrix(_Time.y*_AuroraSpeed),dg);
             p -= dg/z2;
 
             bp *= 1.3;
@@ -244,6 +255,7 @@ Shader "Aurora/AuroraSky"
         float4 col = float4(0,0,0,0);
         float4 avgCol = float4(0,0,0,0);
 
+        // 颜色迭代
         for(float i=0.;i<50.;i++)
         {
             float of = 0.006*SurHash(pos.xy)*smoothstep(0.,15., i);
@@ -251,7 +263,7 @@ Shader "Aurora/AuroraSky"
             pt -= of;
         	float3 bpos = ro + pt*rd;
             float2 p = bpos.zx;
-            float rzt = triNoise2d(p, 0.06);
+            float rzt = triNoise2d(p);
             float4 col2 = float4(0,0,0, rzt);
             col2.rgb = (sin(1.-float3(2.15,-.5, 1.2)+i*_SurAuroraColFactor*0.1)*0.5+0.5)*rzt;
             avgCol =  lerp(avgCol, col2, .5);
@@ -268,6 +280,7 @@ Shader "Aurora/AuroraSky"
 
     half4 frag (v2f i) : COLOR
     {
+        // return fixed4(SurHash(i.texcoord.xy),SurHash(i.texcoord.xy),SurHash(i.texcoord.xy),1);
         float p = normalize(i.texcoord).y;
         float p1 = 1.0f - pow (min (1.0f, 1.0f - p), _Exponent1);
         float p3 = 1.0f - pow (min (1.0f, 1.0f + p), _Exponent2);
@@ -275,7 +288,7 @@ Shader "Aurora/AuroraSky"
         int reflection = i.texcoord.y < 0 ? -1 : 1;
         // 星云
         float cloud = Cloudfbm(fixed2(i.texcoord.x,i.texcoord.z) * 8,1);
-        float4 cloudCol = float4(cloud * _CloudColor.rgb,cloud*0.8);
+        float4 cloudCol = float4(cloud * _CloudColor.rgb,cloud*0.8) * _CloudIntensity;
 
         // 星星
         float star  =StarNoise(fixed3(i.texcoord.x,i.texcoord.y * reflection,i.texcoord.z) * 64);
@@ -294,9 +307,9 @@ Shader "Aurora/AuroraSky"
         float aurora = GetAurora(fixed3(i.texcoord.x,i.texcoord.y * reflection,i.texcoord.z) );
         float3 boreal = float3 (_AuroraColor.rgb  * GetAurora(float3(i.texcoord.xy*float2(1.2,1.), _Time.y*_AuroraSpeed*0.22)) * .9  +
                         _AuroraColor.rgb * GetAurora(float3(i.texcoord.xy*float2(1.,.7)  , _Time.y*_AuroraSpeed*0.27)) *  .9 +
-                        _AuroraColor.rgb * GetAurora(float3(i.texcoord.xz*float2(.8,.6)  , _Time.y*_AuroraSpeed*0.29)) *  .5 +
-                        _AuroraColor.rgb  * GetAurora(float3(i.texcoord.xz*float2(.9,.5)  , _Time.y*_AuroraSpeed*0.20)) *  .57);
-        float4 auroraCol = float4(boreal,aurora*0.8);
+                        _AuroraColor.rgb * GetAurora(float3(i.texcoord.xy*float2(.8,.6)  , _Time.y*_AuroraSpeed*0.29)) *  .5 +
+                        _AuroraColor.rgb  * GetAurora(float3(i.texcoord.xy*float2(.9,.5)  , _Time.y*_AuroraSpeed*0.20)) *  .57);
+        float4 auroraCol = float4(boreal,0.1354);
 
 
         // 远处山脉

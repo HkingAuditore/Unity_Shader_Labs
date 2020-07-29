@@ -81,7 +81,7 @@ Material:
     - _AuroraSpeed: 0.29
     - _BumpScale: 1
     - _CUBEMAPP: 1
-    - _CloudIntensity: 0.45
+    - _CloudIntensity: 0.69
     - _CloudSpeed: 0.94
     - _Cubemapp: 1
     - _Cutoff: 0.5
@@ -125,8 +125,8 @@ Material:
     - _ZWrite: 1
     - __dirty: 0
     m_Colors:
-    - _AuroraColor: {r: 1.6659949, g: 1.0105215, b: 1.7411011, a: 1}
-    - _CloudColor: {r: 0.13453807, g: 0.34669426, b: 0.38809058, a: 0}
+    - _AuroraColor: {r: 1.2567165, g: 0.5987187, b: 0.85767305, a: 1}
+    - _CloudColor: {r: 0.18155928, g: 0.4528302, b: 0.38567895, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Color1: {r: 0.005206492, g: 0.0071959, b: 0.009433985, a: 0}
     - _Color2: {r: 0.16820931, g: 0.213019, b: 0.33962262, a: 0}
