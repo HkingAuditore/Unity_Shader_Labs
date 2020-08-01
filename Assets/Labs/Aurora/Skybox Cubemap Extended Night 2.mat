@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Skybox Cubemap Extended Night 2
-  m_Shader: {fileID: 4800000, guid: 2cdafe4df1b98614299580d0048f5c89, type: 3}
+  m_Shader: {fileID: 4800000, guid: c7489aa62a70f704eaf68d7b560ec293, type: 3}
   m_ShaderKeywords: _ENABLEFOG_ON _ENABLEROTATION_ON
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
@@ -120,12 +120,12 @@ Material:
     - _SrcBlend: 1
     - _StarIntensity: 0.36
     - _StarSpeed: 0.31
-    - _SurAuroraColFactor: 0.6
+    - _SurAuroraColFactor: 0.774
     - _UVSec: 0
     - _ZWrite: 1
     - __dirty: 0
     m_Colors:
-    - _AuroraColor: {r: 1.2567165, g: 0.5987187, b: 0.85767305, a: 1}
+    - _AuroraColor: {r: 1.8443027, g: 0.8786992, b: 1.2649406, a: 1}
     - _CloudColor: {r: 0.18155928, g: 0.4528302, b: 0.38567895, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Color1: {r: 0.005206492, g: 0.0071959, b: 0.009433985, a: 0}

@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Labs/Aurora/Aurora.unity
+    guid: 9935df9f0eac38e469d262d62c12f09d
   m_configObjects: {}
