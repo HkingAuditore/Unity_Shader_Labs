@@ -89,7 +89,7 @@ Material:
     - _Size: 0.42
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _Speed: 30
+    - _Speed: 10
     - _SrcBlend: 1
     - _UVSec: 0
     - _ZWrite: 1

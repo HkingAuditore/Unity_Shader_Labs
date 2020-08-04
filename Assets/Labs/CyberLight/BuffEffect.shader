@@ -110,7 +110,7 @@
                 edge = smoothstep(0,_OutlineThred,edge);   
                 edge = 1 - edge;       
 
-	            fixed4 edgeCol = fixed4(_EdgeColor.rgb + fixed3(0.2,0.2,0.2) * sin(_Time.y * _Speed)*0.5,abs(edge)*_EdgeColor.a);
+	            fixed4 edgeCol = fixed4(_EdgeColor.rgb + fixed3(0.2,0.2,0.2) * sin(_Time.y * _Speed)*2.5,abs(edge)*_EdgeColor.a);
                 
                 fixed4 flowCol = fixed4(_FlowColor.rgb,lerp(0,1,smoothstep(0,0.7,buffId*0.25+_FlowColor.a*0.2)));
                 edgeCol = edgeCol*(1-flowCol.a)+flowCol*flowCol.a;
