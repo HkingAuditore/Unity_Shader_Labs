@@ -8,10 +8,10 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: grass
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: 
+  m_Shader: {fileID: 4800000, guid: 34119347ac1d3b84fb2ebeb9eefbe2e9, type: 3}
+  m_ShaderKeywords: _NORMALMAP _PARALLAXMAP
   m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -19,8 +19,12 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _AOTex:
+        m_Texture: {fileID: 2800000, guid: fc53fc83d63629f4fb2f1c402739a10e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 260d626061d2a1f4db03fc49ce8fad97, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -39,12 +43,16 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _FurTex:
+        m_Texture: {fileID: 2800000, guid: 7e0a6d93f1dc86a469b684f3b4c4c30b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _GradientMap:
         m_Texture: {fileID: 2800000, guid: 21e063ff23094134fb5b2360320e6c88, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 5eaa063ca7088664b91a48a82332a0aa, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -55,12 +63,16 @@ Material:
         m_Texture: {fileID: 2800000, guid: da558f529948ba6408420df712ff01f4, type: 3}
         m_Scale: {x: 10, y: 10}
         m_Offset: {x: 0, y: 0}
+    - _NormalMap:
+        m_Texture: {fileID: 2800000, guid: 260d626061d2a1f4db03fc49ce8fad97, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: fc53fc83d63629f4fb2f1c402739a10e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 5cde2c96a5870074d851304d58987e01, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _WindTexture:
@@ -68,16 +80,20 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _BumpScale: 1
-    - _Cutoff: 0.5
+    - _BumpScale: 0.31
+    - _Cutoff: 0.17
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _ExtrudeMaxValue: 0.17
     - _ExtrudeRandomValue: 0.189
     - _ExtrudeSpeed: 0.2
     - _ExtrusionFactor: 0
+    - _FurDensity: 1.03
+    - _FurLength: 0.069
+    - _FurShading: 0.423
+    - _FurThinness: 2.1
     - _GlossMapScale: 1
-    - _Glossiness: 0.5
+    - _Glossiness: 0
     - _GlossyReflections: 1
     - _GrassBlades: 0.22
     - _GrassHeight: 0.26
@@ -87,18 +103,35 @@ Material:
     - _MinimunGrassBlades: 15
     - _Mode: 0
     - _OcclusionStrength: 1
-    - _Parallax: 0.02
+    - _Parallax: 0.08
     - _PositionRandomness: 0.31
+    - _Rigidness: 7.6
+    - _RimPower: 0.576
+    - _ShadowAdjust: 0.248
+    - _ShadowRange: 0.155
+    - _Shininess: 0.822
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
+    - _Speed: 26.5
     - _SrcBlend: 1
+    - _SwayMax: 0.0101
     - _UVSec: 0
+    - _WindAmplitude: 0.05
+    - _WindDistribution: 106.84
+    - _WindFrequency: 2.98
     - _WindSpeed: 0.94
     - _WindStrength: 0.19
+    - _YOffset: 0.1
     - _ZWrite: 1
     m_Colors:
+    - _AOColor: {r: 0.08009968, g: 0.2264151, b: 0.14512876, a: 1}
     - _BottomColor: {r: 0, g: 0, b: 0, a: 1}
-    - _Color: {r: 0.58559424, g: 0.8584906, b: 0.49808654, a: 1}
+    - _Color: {r: 0.9738654, g: 1, b: 0.8066038, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _ForceGlobal: {r: 0.73, g: 5.9, b: 0.22, a: 0}
+    - _ForceLocal: {r: 5.5, g: 11.26, b: 5.19, a: 0}
+    - _RimColor: {r: 0.030882852, g: 0.03773582, b: 0.027945867, a: 1}
+    - _ShadowColor: {r: 0.47074646, g: 0.8301887, b: 0.3250267, a: 1}
+    - _Specular: {r: 0.31132078, g: 0.31132078, b: 0.31132078, a: 1}
     - _TopColor: {r: 1, g: 1, b: 1, a: 1}
     - _WindColor: {r: 0.6132076, g: 0.21693665, b: 0.21693665, a: 1}

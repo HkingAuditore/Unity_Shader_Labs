@@ -1,149 +1,1124 @@
 ﻿Shader "Grass/Grass"
 {
-    Properties
+ Properties
     {
-        _MainTex ("Texture", 2D) = "white" {}
-		_BottomColor ("Bottom Color", Color) = (0, 0, 0, 1)
-        _TopColor ("Top Color", Color) = (1, 1, 1, 1)
-        _ExtrudeMaxValue ("Extrude Max Value", Range(0, 1)) = 1
-		_ExtrudeRandomValue ("Extrude Random Value", Range(0, 1)) = 1
-		_ExtrudeSpeed ("Extrude Speed", Float) = 1
+        _Color ("Color", Color) = (1, 1, 1, 1)
+        _Specular ("Specular", Color) = (1, 1, 1, 1)
+        _Shininess ("Shininess", Range(0.00, 1.0)) = 0.5
+        _Cutoff ("Cutoff", Range(0.01, 1.0)) = 0.5
+        _ShadowAdjust ("ShadowAdjust", Range(0.01, 1.0)) = 0.5
+        
+        _MainTex ("Texture", 2D) = "white" { }
+        _FurTex ("Fur Pattern", 2D) = "white" { }
+        
+        _FurLength ("Fur Length", Range(0.0, 1)) = 0.5
+        _FurDensity ("Fur Density", Range(0, 2)) = 0.11
+        _FurThinness ("Fur Thinness", Range(0.01, 10)) = 1
+        _FurShading ("Fur Shading", Range(0.0, 1)) = 0.25
+        _AOColor ("AO Color", Color) = (1,1,1,1)      
+        _ShadowColor ("Shadow Color", Color) = (1,1,1,1)
+        _ShadowRange ("ShadowRange", Range(0.01, 1.0)) = 0.5
+
+
+        _ForceGlobal ("Force Global", Vector) = (0, 0, 0, 0)
+        _ForceLocal ("Force Local", Vector) = (0, 0, 0, 0)
+        
+        _RimColor ("Rim Color", Color) = (0, 0, 0, 1)
+        _RimPower ("Rim Power", Range(0.0, 1.0)) = 6.0
+
+        _WindAmplitude ("Wind Amplitude", Float) = 0.01
+	    _WindFrequency ("Wind Frequency", Float) = 5
+	    _WindDistribution ("Wind Distribution", Float) = 120
     }
-    SubShader
+    
+    Category
     {
-        Tags { "RenderType"="Opaque" }
-        LOD 100
 
-        Pass
-        {
-			Cull Off
-
-            CGPROGRAM
-            #pragma vertex vert
-			#pragma geometry geom
-            #pragma fragment frag
-
-            #include "UnityCG.cginc"
-
-            struct a2v
+        Tags { "LightMode" = "ShadowCaster" "Queue"="Geometry+1" "LightMode"="ForwardBase" "IgnoreProjector" = "False" "Queue"="Geometry+1" }
+        //         Tags { "LightMode" = "ForwardBase" "RenderType"="Opaque" "Queue"="Geometry+1" "ForceNoShadowCasting"="True"  }
+		LOD 200
+        //		Blend Zero SrcColor
+        Cull Off
+        ZWrite On
+        Blend SrcAlpha OneMinusSrcAlpha
+        
+        SubShader
+        { 
+            Pass
             {
-                float4 vertex : POSITION;
-                float2 uv : TEXCOORD0;
-            };
+                CGPROGRAM
+                
+                #pragma vertex vert_surface
+                #pragma fragment frag_surface
+                #define FURSTEP 0.00
 
-			struct v2g
-			{
-				float4 vertex : POSITION;
-                float2 uv : TEXCOORD0;
-			};
+                #pragma target 3.0
 
-            struct g2f
-            {
-				float4 vertex : SV_POSITION;
-                float2 uv : TEXCOORD0;
-				float4 color : COLOR;
-            };
 
-            sampler2D _MainTex;
-            float4 _MainTex_ST;
-			float4 _BottomColor;
-            float4 _TopColor;
-            float _ExtrudeMaxValue;
-			float _ExtrudeRandomValue;
-			float _ExtrudeSpeed;
+                #include "UnityCG.cginc"
+                #include "UnityPBSLighting.cginc"
+                #include "UnityStandardBRDF.cginc"
+                #pragma multi_compile_fwdadd_fullshadows
+                #pragma multi_compile_fwdbase
+                #include "Lighting.cginc" 
+                #include "AutoLight.cginc"
 
-            v2g vert (a2v v)
-            {
-                v2g o;
-                o.vertex = v.vertex;
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-                return o;
-            }
 
-			float3 ConstructNormal(float3 v1, float3 v2, float3 v3)
-            {
-                return normalize(cross(v2 - v1, v3 - v1));
-            }
-
-			[maxvertexcount(21)]
-			void geom(triangle v2g input[3], uint pid : SV_PrimitiveID, inout TriangleStream<g2f> outStream)
-			{
-				float extrudeAmount = cos(_Time.y * 2 * UNITY_PI * _ExtrudeSpeed) * 0.5 + 0.5;
-				extrudeAmount *= _ExtrudeMaxValue;
-				extrudeAmount += (sin(pid * 832.37843 + _Time.y * 2 * UNITY_PI * _ExtrudeSpeed) * 0.5 + 0.5) * _ExtrudeRandomValue;
-
-				float3 normal = ConstructNormal(input[0].vertex, input[1].vertex, input[2].vertex);
-				normal = normal * extrudeAmount;
-
-				g2f o;
-
-				for(int i = 0; i < 3; i++)
-				{
-					int index = (i + 1) % 3;
-
-					o.vertex = input[i].vertex;
-					o.vertex = UnityObjectToClipPos(o.vertex);
-					o.uv = input[i].uv;
-					o.color = _BottomColor;
-					outStream.Append(o);
-
-					o.vertex = input[i].vertex;
-					o.vertex.xyz += normal;
-					o.vertex = UnityObjectToClipPos(o.vertex);
-					o.uv = input[i].uv;
-					o.color = _TopColor;
-					outStream.Append(o);
-
-					o.vertex = input[index].vertex;
-					o.vertex = UnityObjectToClipPos(o.vertex);
-					o.uv = input[index].uv;
-					o.color = _BottomColor;
-					outStream.Append(o);
-
-					outStream.RestartStrip();
-
-					o.vertex = input[i].vertex;
-					o.vertex.xyz += normal;
-					o.vertex = UnityObjectToClipPos(o.vertex);
-					o.uv = input[i].uv;
-					o.color = _TopColor;
-					outStream.Append(o);
-
-					o.vertex = input[index].vertex;
-					o.vertex = UnityObjectToClipPos(o.vertex);
-					o.uv = input[index].uv;
-					o.color = _BottomColor;
-					outStream.Append(o);
-
-					o.vertex = input[index].vertex;
-					o.vertex.xyz += normal;
-					o.vertex = UnityObjectToClipPos(o.vertex);
-					o.uv = input[index].uv;
-					o.color = _TopColor;
-					outStream.Append(o);
-
-					outStream.RestartStrip();
-				}
-
-				for(int i = 0; i < 3; i++)
+                struct v2f
                 {
-                    o.vertex = input[i].vertex;
-					o.vertex.xyz += normal;
-					o.vertex = UnityObjectToClipPos(o.vertex);
-					o.uv = input[i].uv;
-					o.color = _TopColor;
-					outStream.Append(o);
+                    float4 pos: SV_POSITION;
+                    half4 uv: TEXCOORD0;
+                    float3 worldNormal: TEXCOORD1;
+                    float3 worldPos: TEXCOORD2;
+                    SHADOW_COORDS(3)
+                };
+
+                fixed4 _Color;
+                fixed4 _Specular;
+                half _Shininess;
+                fixed _ShadowAdjust;
+                half _ShadowRange;
+                half _WindAmplitude;
+                half _WindFrequency;
+                half _WindDistribution;
+                fixed _Cutoff;
+
+                sampler2D _MainTex;
+                half4 _MainTex_ST;
+                sampler2D _FurTex;
+                half4 _FurTex_ST;
+
+                fixed _FurLength;
+                fixed _FurDensity;
+                fixed _FurThinness;
+                fixed _FurShading;
+
+                fixed4 _AOColor;
+                fixed4 _ShadowColor;
+
+                float4 _ForceGlobal;
+                float4 _ForceLocal;
+
+
+                fixed4 _RimColor;
+                half _RimPower;
+
+                v2f vert_surface(appdata_base v)
+                {
+                    v2f o;
+                    o.uv.xy = TRANSFORM_TEX(v.texcoord, _MainTex);
+                    o.pos = UnityObjectToClipPos(v.vertex);
+                    o.worldNormal = UnityObjectToWorldNormal(v.normal);
+                    o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+                    TRANSFER_SHADOW(o);
+                    return o;
                 }
 
-				outStream.RestartStrip();
-			}
 
-            fixed4 frag (g2f i) : SV_Target
-            {
-				fixed4 col = tex2D(_MainTex, i.uv) * i.color;
-                return col;
+
+                fixed4 frag_surface(v2f i): SV_Target
+                {
+                    
+                    fixed3 worldNormal = normalize(i.worldNormal);
+                    fixed3 worldLight = normalize(_WorldSpaceLightPos0.xyz);
+                    fixed3 worldView = normalize(_WorldSpaceCameraPos.xyz - i.worldPos.xyz);
+                    fixed3 worldHalf = normalize(worldView + worldLight);
+                    fixed shadow = SHADOW_ATTENUATION(i); 
+                    
+
+                    fixed3 albedo = tex2D(_MainTex, i.uv.xy).rgb * _Color;
+                    fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz * albedo*_AOColor;
+                    fixed3 diffuse = _LightColor0.rgb * albedo * saturate(dot(worldNormal, worldLight));
+                    fixed3 lightting = saturate(dot(worldNormal, worldLight));
+
+
+
+                    fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(saturate(dot(worldNormal, worldHalf)), _Shininess);
+
+                    fixed3 color = ambient + diffuse + specular;
+
+
+                    return fixed4(color*(shadow+_ShadowAdjust), 1.0);
+                }
+                ENDCG           
             }
-            ENDCG
-        }
-    }
-}
+ 
+            Pass
+            {
+                CGPROGRAM
+                
+               #pragma vertex vert_base
+               #pragma fragment frag_base
+               #define FURSTEP 0.03
+               #pragma target 3.0
+
+
+                #include "UnityCG.cginc"
+                #include "UnityPBSLighting.cginc"
+                #include "UnityStandardBRDF.cginc"
+                #pragma multi_compile_fwdadd_fullshadows
+                #pragma multi_compile_fwdbase
+                #include "Lighting.cginc" 
+                #include "AutoLight.cginc"
+
+
+                struct v2f
+                {
+                    float4 pos: SV_POSITION;
+                    half4 uv: TEXCOORD0;
+                    float3 worldNormal: TEXCOORD1;
+                    float3 worldPos: TEXCOORD2;
+                    SHADOW_COORDS(3)
+                };
+
+                fixed4 _Color;
+                fixed4 _Specular;
+                half _Shininess;
+                fixed _ShadowAdjust;
+                half _ShadowRange;
+                half _WindAmplitude;
+                half _WindFrequency;
+                half _WindDistribution;
+                fixed _Cutoff;
+                
+                sampler2D _MainTex;
+                half4 _MainTex_ST;
+                sampler2D _FurTex;
+                half4 _FurTex_ST;
+                
+                fixed _FurLength;
+                fixed _FurDensity;
+                fixed _FurThinness;
+                fixed _FurShading;
+                
+                fixed4 _AOColor;
+                fixed4 _ShadowColor;
+                
+                float4 _ForceGlobal;
+                float4 _ForceLocal;
+                
+                
+                fixed4 _RimColor;
+                half _RimPower;
+
+                v2f vert_base(appdata_base v)
+                {
+                    v2f o;
+                    v.vertex.x += /*abs*/( sin(/*v.vertex.z */ _WindDistribution + _Time.y * _WindFrequency) * _WindAmplitude) * v.texcoord.y*FURSTEP;
+                    v.vertex.y += /*abs*/( cos(/*v.vertex.y */ _WindDistribution + _Time.y * _WindFrequency) * _WindAmplitude) * v.texcoord.y*FURSTEP;
+                
+                    float3 P = v.vertex.xyz + v.normal * _FurLength * FURSTEP;
+                    P += clamp(mul(unity_WorldToObject, _ForceGlobal).xyz + _ForceLocal.xyz, -1, 1) * pow(FURSTEP, 3) * _FurLength;
+                    o.pos = UnityObjectToClipPos(float4(P, 1.0));
+                    o.uv.xy = TRANSFORM_TEX(v.texcoord, _MainTex);
+                    o.uv.zw = TRANSFORM_TEX(v.texcoord, _FurTex);
+                    //clip(_FurTex.a - _Cutoff);
+                    o.worldNormal = UnityObjectToWorldNormal(v.normal);
+                    o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+                    TRANSFER_SHADOW(o)  
+                    return o;
+                }
+                fixed4 frag_base(v2f i): SV_Target
+                {
+                    fixed3 worldNormal = normalize(i.worldNormal);
+                    fixed3 worldLight = normalize(_WorldSpaceLightPos0.xyz);
+                    fixed3 worldView = normalize(_WorldSpaceCameraPos.xyz - i.worldPos.xyz);
+                    fixed3 worldHalf = normalize(worldView + worldLight);
+                    fixed shadow = SHADOW_ATTENUATION(i);  
+                    
+                    fixed3 albedo = tex2D(_MainTex, i.uv.xy).rgb * _Color;
+                    albedo -= (pow(1 - FURSTEP, 3)) * _FurShading;
+                    half rim = 1.0 - saturate(dot(worldView, worldNormal));
+                    albedo += fixed4(_RimColor.rgb * pow(rim, _RimPower), 1.0);
+                    
+                    
+                    fixed3 ambient = (dot(UNITY_LIGHTMODEL_AMBIENT.xyz,(1,1,1))<0.8?UNITY_LIGHTMODEL_AMBIENT.xyz+(1.5,1.5,1.5):UNITY_LIGHTMODEL_AMBIENT) * albedo*_AOColor;
+                    fixed3 diffuse = _LightColor0.rgb * albedo * saturate(dot(worldNormal, worldLight));
+                    fixed3 lightting = pow(saturate(dot(worldNormal, worldLight)),_ShadowRange);
+                    fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(saturate(dot(worldNormal, worldHalf)), _Shininess);
+                
+                
+                    fixed3 color = ambient + diffuse + specular;
+                    fixed3 noise = tex2D(_FurTex, i.uv.zw * _FurThinness).rgb;
+                   
+                    fixed alpha = clamp(noise - (FURSTEP * FURSTEP) * _FurDensity, 0, 1);
+                    clip(alpha-_Cutoff);
+                
+                    return fixed4(color*(shadow+_ShadowAdjust), alpha*3.5);
+                }
+
+
+                
+                ENDCG              
+            }
+            Pass
+            {
+                CGPROGRAM
+                
+               #pragma vertex vert_base
+               #pragma fragment frag_base
+               #define FURSTEP 0.06
+               #pragma target 3.0
+
+
+                #include "UnityCG.cginc"
+                #include "UnityPBSLighting.cginc"
+                #include "UnityStandardBRDF.cginc"
+                #pragma multi_compile_fwdadd_fullshadows
+                #pragma multi_compile_fwdbase
+                #include "Lighting.cginc" 
+                #include "AutoLight.cginc"
+
+
+                struct v2f
+                {
+                    float4 pos: SV_POSITION;
+                    half4 uv: TEXCOORD0;
+                    float3 worldNormal: TEXCOORD1;
+                    float3 worldPos: TEXCOORD2;
+                    SHADOW_COORDS(3)
+                };
+
+                fixed4 _Color;
+                fixed4 _Specular;
+                half _Shininess;
+                fixed _ShadowAdjust;
+                half _ShadowRange;
+                half _WindAmplitude;
+                half _WindFrequency;
+                half _WindDistribution;
+                fixed _Cutoff;
+                
+                sampler2D _MainTex;
+                half4 _MainTex_ST;
+                sampler2D _FurTex;
+                half4 _FurTex_ST;
+                
+                fixed _FurLength;
+                fixed _FurDensity;
+                fixed _FurThinness;
+                fixed _FurShading;
+                
+                fixed4 _AOColor;
+                fixed4 _ShadowColor;
+                
+                float4 _ForceGlobal;
+                float4 _ForceLocal;
+                
+                
+                fixed4 _RimColor;
+                half _RimPower;
+
+                v2f vert_base(appdata_base v)
+                {
+                    v2f o;
+                    v.vertex.x += /*abs*/( sin(/*v.vertex.z */ _WindDistribution + _Time.y * _WindFrequency) * _WindAmplitude) * v.texcoord.y*FURSTEP;
+                    v.vertex.y += /*abs*/( cos(/*v.vertex.y */ _WindDistribution + _Time.y * _WindFrequency) * _WindAmplitude) * v.texcoord.y*FURSTEP;
+                
+                    float3 P = v.vertex.xyz + v.normal * _FurLength * FURSTEP;
+                    P += clamp(mul(unity_WorldToObject, _ForceGlobal).xyz + _ForceLocal.xyz, -1, 1) * pow(FURSTEP, 3) * _FurLength;
+                    o.pos = UnityObjectToClipPos(float4(P, 1.0));
+                    o.uv.xy = TRANSFORM_TEX(v.texcoord, _MainTex);
+                    o.uv.zw = TRANSFORM_TEX(v.texcoord, _FurTex);
+                    //clip(_FurTex.a - _Cutoff);
+                    o.worldNormal = UnityObjectToWorldNormal(v.normal);
+                    o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+                    TRANSFER_SHADOW(o)  
+                    return o;
+                }
+                fixed4 frag_base(v2f i): SV_Target
+                {
+                    fixed3 worldNormal = normalize(i.worldNormal);
+                    fixed3 worldLight = normalize(_WorldSpaceLightPos0.xyz);
+                    fixed3 worldView = normalize(_WorldSpaceCameraPos.xyz - i.worldPos.xyz);
+                    fixed3 worldHalf = normalize(worldView + worldLight);
+                    fixed shadow = SHADOW_ATTENUATION(i);  
+                    
+                    fixed3 albedo = tex2D(_MainTex, i.uv.xy).rgb * _Color;
+                    albedo -= (pow(1 - FURSTEP, 3)) * _FurShading;
+                    half rim = 1.0 - saturate(dot(worldView, worldNormal));
+                    albedo += fixed4(_RimColor.rgb * pow(rim, _RimPower), 1.0);
+                    
+                    
+                    fixed3 ambient = (dot(UNITY_LIGHTMODEL_AMBIENT.xyz,(1,1,1))<0.8?UNITY_LIGHTMODEL_AMBIENT.xyz+(1.5,1.5,1.5):UNITY_LIGHTMODEL_AMBIENT) * albedo*_AOColor;
+                    fixed3 diffuse = _LightColor0.rgb * albedo * saturate(dot(worldNormal, worldLight));
+                    fixed3 lightting = pow(saturate(dot(worldNormal, worldLight)),_ShadowRange);
+                    fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(saturate(dot(worldNormal, worldHalf)), _Shininess);
+                
+                
+                    fixed3 color = ambient + diffuse + specular;
+                    fixed3 noise = tex2D(_FurTex, i.uv.zw * _FurThinness).rgb;
+                   
+                    fixed alpha = clamp(noise - (FURSTEP * FURSTEP) * _FurDensity, 0, 1);
+                    clip(alpha-_Cutoff);
+                
+                    return fixed4(color*(shadow+_ShadowAdjust), alpha*3.5);
+                }
+
+
+                
+                ENDCG              
+            }
+            Pass
+            {
+                CGPROGRAM
+                
+               #pragma vertex vert_base
+               #pragma fragment frag_base
+               #define FURSTEP 0.12
+               #pragma target 3.0
+
+
+                #include "UnityCG.cginc"
+                #include "UnityPBSLighting.cginc"
+                #include "UnityStandardBRDF.cginc"
+                #pragma multi_compile_fwdadd_fullshadows
+                #pragma multi_compile_fwdbase
+                #include "Lighting.cginc" 
+                #include "AutoLight.cginc"
+
+
+                struct v2f
+                {
+                    float4 pos: SV_POSITION;
+                    half4 uv: TEXCOORD0;
+                    float3 worldNormal: TEXCOORD1;
+                    float3 worldPos: TEXCOORD2;
+                    SHADOW_COORDS(3)
+                };
+
+                fixed4 _Color;
+                fixed4 _Specular;
+                half _Shininess;
+                fixed _ShadowAdjust;
+                half _ShadowRange;
+                half _WindAmplitude;
+                half _WindFrequency;
+                half _WindDistribution;
+                fixed _Cutoff;
+                
+                sampler2D _MainTex;
+                half4 _MainTex_ST;
+                sampler2D _FurTex;
+                half4 _FurTex_ST;
+                
+                fixed _FurLength;
+                fixed _FurDensity;
+                fixed _FurThinness;
+                fixed _FurShading;
+                
+                fixed4 _AOColor;
+                fixed4 _ShadowColor;
+                
+                float4 _ForceGlobal;
+                float4 _ForceLocal;
+                
+                
+                fixed4 _RimColor;
+                half _RimPower;
+
+                v2f vert_base(appdata_base v)
+                {
+                    v2f o;
+                    v.vertex.x += /*abs*/( sin(/*v.vertex.z */ _WindDistribution + _Time.y * _WindFrequency) * _WindAmplitude) * v.texcoord.y*FURSTEP;
+                    v.vertex.y += /*abs*/( cos(/*v.vertex.y */ _WindDistribution + _Time.y * _WindFrequency) * _WindAmplitude) * v.texcoord.y*FURSTEP;
+                
+                    float3 P = v.vertex.xyz + v.normal * _FurLength * FURSTEP;
+                    P += clamp(mul(unity_WorldToObject, _ForceGlobal).xyz + _ForceLocal.xyz, -1, 1) * pow(FURSTEP, 3) * _FurLength;
+                    o.pos = UnityObjectToClipPos(float4(P, 1.0));
+                    o.uv.xy = TRANSFORM_TEX(v.texcoord, _MainTex);
+                    o.uv.zw = TRANSFORM_TEX(v.texcoord, _FurTex);
+                    //clip(_FurTex.a - _Cutoff);
+                    o.worldNormal = UnityObjectToWorldNormal(v.normal);
+                    o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+                    TRANSFER_SHADOW(o)  
+                    return o;
+                }
+                fixed4 frag_base(v2f i): SV_Target
+                {
+                    fixed3 worldNormal = normalize(i.worldNormal);
+                    fixed3 worldLight = normalize(_WorldSpaceLightPos0.xyz);
+                    fixed3 worldView = normalize(_WorldSpaceCameraPos.xyz - i.worldPos.xyz);
+                    fixed3 worldHalf = normalize(worldView + worldLight);
+                    fixed shadow = SHADOW_ATTENUATION(i);  
+                    
+                    fixed3 albedo = tex2D(_MainTex, i.uv.xy).rgb * _Color;
+                    albedo -= (pow(1 - FURSTEP, 3)) * _FurShading;
+                    half rim = 1.0 - saturate(dot(worldView, worldNormal));
+                    albedo += fixed4(_RimColor.rgb * pow(rim, _RimPower), 1.0);
+                    
+                    
+                    fixed3 ambient = (dot(UNITY_LIGHTMODEL_AMBIENT.xyz,(1,1,1))<0.8?UNITY_LIGHTMODEL_AMBIENT.xyz+(1.5,1.5,1.5):UNITY_LIGHTMODEL_AMBIENT) * albedo*_AOColor;
+                    fixed3 diffuse = _LightColor0.rgb * albedo * saturate(dot(worldNormal, worldLight));
+                    fixed3 lightting = pow(saturate(dot(worldNormal, worldLight)),_ShadowRange);
+                    fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(saturate(dot(worldNormal, worldHalf)), _Shininess);
+                
+                
+                    fixed3 color = ambient + diffuse + specular;
+                    fixed3 noise = tex2D(_FurTex, i.uv.zw * _FurThinness).rgb;
+                   
+                    fixed alpha = clamp(noise - (FURSTEP * FURSTEP) * _FurDensity, 0, 1);
+                    clip(alpha-_Cutoff);
+                
+                    return fixed4(color*(shadow+_ShadowAdjust), alpha*3.5);
+                }
+
+
+                
+                ENDCG              
+            }
+            Pass
+            {
+                CGPROGRAM
+                
+               #pragma vertex vert_base
+               #pragma fragment frag_base
+               #define FURSTEP 0.15
+               #pragma target 3.0
+
+
+                #include "UnityCG.cginc"
+                #include "UnityPBSLighting.cginc"
+                #include "UnityStandardBRDF.cginc"
+                #pragma multi_compile_fwdadd_fullshadows
+                #pragma multi_compile_fwdbase
+                #include "Lighting.cginc" 
+                #include "AutoLight.cginc"
+
+
+                struct v2f
+                {
+                    float4 pos: SV_POSITION;
+                    half4 uv: TEXCOORD0;
+                    float3 worldNormal: TEXCOORD1;
+                    float3 worldPos: TEXCOORD2;
+                    SHADOW_COORDS(3)
+                };
+
+                fixed4 _Color;
+                fixed4 _Specular;
+                half _Shininess;
+                fixed _ShadowAdjust;
+                half _ShadowRange;
+                half _WindAmplitude;
+                half _WindFrequency;
+                half _WindDistribution;
+                fixed _Cutoff;
+                
+                sampler2D _MainTex;
+                half4 _MainTex_ST;
+                sampler2D _FurTex;
+                half4 _FurTex_ST;
+                
+                fixed _FurLength;
+                fixed _FurDensity;
+                fixed _FurThinness;
+                fixed _FurShading;
+                
+                fixed4 _AOColor;
+                fixed4 _ShadowColor;
+                
+                float4 _ForceGlobal;
+                float4 _ForceLocal;
+                
+                
+                fixed4 _RimColor;
+                half _RimPower;
+
+                v2f vert_base(appdata_base v)
+                {
+                    v2f o;
+                    v.vertex.x += /*abs*/( sin(/*v.vertex.z */ _WindDistribution + _Time.y * _WindFrequency) * _WindAmplitude) * v.texcoord.y*FURSTEP;
+                    v.vertex.y += /*abs*/( cos(/*v.vertex.y */ _WindDistribution + _Time.y * _WindFrequency) * _WindAmplitude) * v.texcoord.y*FURSTEP;
+                
+                    float3 P = v.vertex.xyz + v.normal * _FurLength * FURSTEP;
+                    P += clamp(mul(unity_WorldToObject, _ForceGlobal).xyz + _ForceLocal.xyz, -1, 1) * pow(FURSTEP, 3) * _FurLength;
+                    o.pos = UnityObjectToClipPos(float4(P, 1.0));
+                    o.uv.xy = TRANSFORM_TEX(v.texcoord, _MainTex);
+                    o.uv.zw = TRANSFORM_TEX(v.texcoord, _FurTex);
+                    //clip(_FurTex.a - _Cutoff);
+                    o.worldNormal = UnityObjectToWorldNormal(v.normal);
+                    o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+                    TRANSFER_SHADOW(o)  
+                    return o;
+                }
+                fixed4 frag_base(v2f i): SV_Target
+                {
+                    fixed3 worldNormal = normalize(i.worldNormal);
+                    fixed3 worldLight = normalize(_WorldSpaceLightPos0.xyz);
+                    fixed3 worldView = normalize(_WorldSpaceCameraPos.xyz - i.worldPos.xyz);
+                    fixed3 worldHalf = normalize(worldView + worldLight);
+                    fixed shadow = SHADOW_ATTENUATION(i);  
+                    
+                    fixed3 albedo = tex2D(_MainTex, i.uv.xy).rgb * _Color;
+                    albedo -= (pow(1 - FURSTEP, 3)) * _FurShading;
+                    half rim = 1.0 - saturate(dot(worldView, worldNormal));
+                    albedo += fixed4(_RimColor.rgb * pow(rim, _RimPower), 1.0);
+                    
+                    
+                    fixed3 ambient = (dot(UNITY_LIGHTMODEL_AMBIENT.xyz,(1,1,1))<0.8?UNITY_LIGHTMODEL_AMBIENT.xyz+(1.5,1.5,1.5):UNITY_LIGHTMODEL_AMBIENT) * albedo*_AOColor;
+                    fixed3 diffuse = _LightColor0.rgb * albedo * saturate(dot(worldNormal, worldLight));
+                    fixed3 lightting = pow(saturate(dot(worldNormal, worldLight)),_ShadowRange);
+                    fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(saturate(dot(worldNormal, worldHalf)), _Shininess);
+                
+                
+                    fixed3 color = ambient + diffuse + specular;
+                    fixed3 noise = tex2D(_FurTex, i.uv.zw * _FurThinness).rgb;
+                   
+                    fixed alpha = clamp(noise - (FURSTEP * FURSTEP) * _FurDensity, 0, 1);
+                    clip(alpha-_Cutoff);
+                
+                    return fixed4(color*(shadow+_ShadowAdjust), alpha*3.5);
+                }
+
+
+                
+                ENDCG              
+            }
+            Pass
+            {
+                CGPROGRAM
+                
+               #pragma vertex vert_base
+               #pragma fragment frag_base
+               #define FURSTEP 0.18
+               #pragma target 3.0
+
+
+                #include "UnityCG.cginc"
+                #include "UnityPBSLighting.cginc"
+                #include "UnityStandardBRDF.cginc"
+                #pragma multi_compile_fwdadd_fullshadows
+                #pragma multi_compile_fwdbase
+                #include "Lighting.cginc" 
+                #include "AutoLight.cginc"
+
+
+                struct v2f
+                {
+                    float4 pos: SV_POSITION;
+                    half4 uv: TEXCOORD0;
+                    float3 worldNormal: TEXCOORD1;
+                    float3 worldPos: TEXCOORD2;
+                    SHADOW_COORDS(3)
+                };
+
+                fixed4 _Color;
+                fixed4 _Specular;
+                half _Shininess;
+                fixed _ShadowAdjust;
+                half _ShadowRange;
+                half _WindAmplitude;
+                half _WindFrequency;
+                half _WindDistribution;
+                fixed _Cutoff;
+                
+                sampler2D _MainTex;
+                half4 _MainTex_ST;
+                sampler2D _FurTex;
+                half4 _FurTex_ST;
+                
+                fixed _FurLength;
+                fixed _FurDensity;
+                fixed _FurThinness;
+                fixed _FurShading;
+                
+                fixed4 _AOColor;
+                fixed4 _ShadowColor;
+                
+                float4 _ForceGlobal;
+                float4 _ForceLocal;
+                
+                
+                fixed4 _RimColor;
+                half _RimPower;
+
+                v2f vert_base(appdata_base v)
+                {
+                    v2f o;
+                    v.vertex.x += /*abs*/( sin(/*v.vertex.z */ _WindDistribution + _Time.y * _WindFrequency) * _WindAmplitude) * v.texcoord.y*FURSTEP;
+                    v.vertex.y += /*abs*/( cos(/*v.vertex.y */ _WindDistribution + _Time.y * _WindFrequency) * _WindAmplitude) * v.texcoord.y*FURSTEP;
+                
+                    float3 P = v.vertex.xyz + v.normal * _FurLength * FURSTEP;
+                    P += clamp(mul(unity_WorldToObject, _ForceGlobal).xyz + _ForceLocal.xyz, -1, 1) * pow(FURSTEP, 3) * _FurLength;
+                    o.pos = UnityObjectToClipPos(float4(P, 1.0));
+                    o.uv.xy = TRANSFORM_TEX(v.texcoord, _MainTex);
+                    o.uv.zw = TRANSFORM_TEX(v.texcoord, _FurTex);
+                    //clip(_FurTex.a - _Cutoff);
+                    o.worldNormal = UnityObjectToWorldNormal(v.normal);
+                    o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+                    TRANSFER_SHADOW(o)  
+                    return o;
+                }
+                fixed4 frag_base(v2f i): SV_Target
+                {
+                    fixed3 worldNormal = normalize(i.worldNormal);
+                    fixed3 worldLight = normalize(_WorldSpaceLightPos0.xyz);
+                    fixed3 worldView = normalize(_WorldSpaceCameraPos.xyz - i.worldPos.xyz);
+                    fixed3 worldHalf = normalize(worldView + worldLight);
+                    fixed shadow = SHADOW_ATTENUATION(i);  
+                    
+                    fixed3 albedo = tex2D(_MainTex, i.uv.xy).rgb * _Color;
+                    albedo -= (pow(1 - FURSTEP, 3)) * _FurShading;
+                    half rim = 1.0 - saturate(dot(worldView, worldNormal));
+                    albedo += fixed4(_RimColor.rgb * pow(rim, _RimPower), 1.0);
+                    
+                    
+                    fixed3 ambient = (dot(UNITY_LIGHTMODEL_AMBIENT.xyz,(1,1,1))<0.8?UNITY_LIGHTMODEL_AMBIENT.xyz+(1.5,1.5,1.5):UNITY_LIGHTMODEL_AMBIENT) * albedo*_AOColor;
+                    fixed3 diffuse = _LightColor0.rgb * albedo * saturate(dot(worldNormal, worldLight));
+                    fixed3 lightting = pow(saturate(dot(worldNormal, worldLight)),_ShadowRange);
+                    fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(saturate(dot(worldNormal, worldHalf)), _Shininess);
+                
+                
+                    fixed3 color = ambient + diffuse + specular;
+                    fixed3 noise = tex2D(_FurTex, i.uv.zw * _FurThinness).rgb;
+                   
+                    fixed alpha = clamp(noise - (FURSTEP * FURSTEP) * _FurDensity, 0, 1);
+                    clip(alpha-_Cutoff);
+                
+                    return fixed4(color*(shadow+_ShadowAdjust), alpha*3.5);
+                }
+
+
+                
+                ENDCG              
+            }
+            Pass
+            {
+                CGPROGRAM
+                
+               #pragma vertex vert_base
+               #pragma fragment frag_base
+               #define FURSTEP 0.21
+               #pragma target 3.0
+
+
+                #include "UnityCG.cginc"
+                #include "UnityPBSLighting.cginc"
+                #include "UnityStandardBRDF.cginc"
+                #pragma multi_compile_fwdadd_fullshadows
+                #pragma multi_compile_fwdbase
+                #include "Lighting.cginc" 
+                #include "AutoLight.cginc"
+
+
+                struct v2f
+                {
+                    float4 pos: SV_POSITION;
+                    half4 uv: TEXCOORD0;
+                    float3 worldNormal: TEXCOORD1;
+                    float3 worldPos: TEXCOORD2;
+                    SHADOW_COORDS(3)
+                };
+
+                fixed4 _Color;
+                fixed4 _Specular;
+                half _Shininess;
+                fixed _ShadowAdjust;
+                half _ShadowRange;
+                half _WindAmplitude;
+                half _WindFrequency;
+                half _WindDistribution;
+                fixed _Cutoff;
+                
+                sampler2D _MainTex;
+                half4 _MainTex_ST;
+                sampler2D _FurTex;
+                half4 _FurTex_ST;
+                
+                fixed _FurLength;
+                fixed _FurDensity;
+                fixed _FurThinness;
+                fixed _FurShading;
+                
+                fixed4 _AOColor;
+                fixed4 _ShadowColor;
+                
+                float4 _ForceGlobal;
+                float4 _ForceLocal;
+                
+                
+                fixed4 _RimColor;
+                half _RimPower;
+
+                v2f vert_base(appdata_base v)
+                {
+                    v2f o;
+                    v.vertex.x += /*abs*/( sin(/*v.vertex.z */ _WindDistribution + _Time.y * _WindFrequency) * _WindAmplitude) * v.texcoord.y*FURSTEP;
+                    v.vertex.y += /*abs*/( cos(/*v.vertex.y */ _WindDistribution + _Time.y * _WindFrequency) * _WindAmplitude) * v.texcoord.y*FURSTEP;
+                
+                    float3 P = v.vertex.xyz + v.normal * _FurLength * FURSTEP;
+                    P += clamp(mul(unity_WorldToObject, _ForceGlobal).xyz + _ForceLocal.xyz, -1, 1) * pow(FURSTEP, 3) * _FurLength;
+                    o.pos = UnityObjectToClipPos(float4(P, 1.0));
+                    o.uv.xy = TRANSFORM_TEX(v.texcoord, _MainTex);
+                    o.uv.zw = TRANSFORM_TEX(v.texcoord, _FurTex);
+                    //clip(_FurTex.a - _Cutoff);
+                    o.worldNormal = UnityObjectToWorldNormal(v.normal);
+                    o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+                    TRANSFER_SHADOW(o)  
+                    return o;
+                }
+                fixed4 frag_base(v2f i): SV_Target
+                {
+                    fixed3 worldNormal = normalize(i.worldNormal);
+                    fixed3 worldLight = normalize(_WorldSpaceLightPos0.xyz);
+                    fixed3 worldView = normalize(_WorldSpaceCameraPos.xyz - i.worldPos.xyz);
+                    fixed3 worldHalf = normalize(worldView + worldLight);
+                    fixed shadow = SHADOW_ATTENUATION(i);  
+                    
+                    fixed3 albedo = tex2D(_MainTex, i.uv.xy).rgb * _Color;
+                    albedo -= (pow(1 - FURSTEP, 3)) * _FurShading;
+                    half rim = 1.0 - saturate(dot(worldView, worldNormal));
+                    albedo += fixed4(_RimColor.rgb * pow(rim, _RimPower), 1.0);
+                    
+                    
+                    fixed3 ambient = (dot(UNITY_LIGHTMODEL_AMBIENT.xyz,(1,1,1))<0.8?UNITY_LIGHTMODEL_AMBIENT.xyz+(1.5,1.5,1.5):UNITY_LIGHTMODEL_AMBIENT) * albedo*_AOColor;
+                    fixed3 diffuse = _LightColor0.rgb * albedo * saturate(dot(worldNormal, worldLight));
+                    fixed3 lightting = pow(saturate(dot(worldNormal, worldLight)),_ShadowRange);
+                    fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(saturate(dot(worldNormal, worldHalf)), _Shininess);
+                
+                
+                    fixed3 color = ambient + diffuse + specular;
+                    fixed3 noise = tex2D(_FurTex, i.uv.zw * _FurThinness).rgb;
+                   
+                    fixed alpha = clamp(noise - (FURSTEP * FURSTEP) * _FurDensity, 0, 1);
+                    clip(alpha-_Cutoff);
+                
+                    return fixed4(color*(shadow+_ShadowAdjust), alpha*3.5);
+                }
+
+
+                
+                ENDCG              
+            }
+            Pass
+            {
+                CGPROGRAM
+                
+               #pragma vertex vert_base
+               #pragma fragment frag_base
+               #define FURSTEP 0.24
+               #pragma target 3.0
+
+
+                #include "UnityCG.cginc"
+                #include "UnityPBSLighting.cginc"
+                #include "UnityStandardBRDF.cginc"
+                #pragma multi_compile_fwdadd_fullshadows
+                #pragma multi_compile_fwdbase
+                #include "Lighting.cginc" 
+                #include "AutoLight.cginc"
+
+
+                struct v2f
+                {
+                    float4 pos: SV_POSITION;
+                    half4 uv: TEXCOORD0;
+                    float3 worldNormal: TEXCOORD1;
+                    float3 worldPos: TEXCOORD2;
+                    SHADOW_COORDS(3)
+                };
+
+                fixed4 _Color;
+                fixed4 _Specular;
+                half _Shininess;
+                fixed _ShadowAdjust;
+                half _ShadowRange;
+                half _WindAmplitude;
+                half _WindFrequency;
+                half _WindDistribution;
+                fixed _Cutoff;
+                
+                sampler2D _MainTex;
+                half4 _MainTex_ST;
+                sampler2D _FurTex;
+                half4 _FurTex_ST;
+                
+                fixed _FurLength;
+                fixed _FurDensity;
+                fixed _FurThinness;
+                fixed _FurShading;
+                
+                fixed4 _AOColor;
+                fixed4 _ShadowColor;
+                
+                float4 _ForceGlobal;
+                float4 _ForceLocal;
+                
+                
+                fixed4 _RimColor;
+                half _RimPower;
+
+                v2f vert_base(appdata_base v)
+                {
+                    v2f o;
+                    v.vertex.x += /*abs*/( sin(/*v.vertex.z */ _WindDistribution + _Time.y * _WindFrequency) * _WindAmplitude) * v.texcoord.y*FURSTEP;
+                    v.vertex.y += /*abs*/( cos(/*v.vertex.y */ _WindDistribution + _Time.y * _WindFrequency) * _WindAmplitude) * v.texcoord.y*FURSTEP;
+                
+                    float3 P = v.vertex.xyz + v.normal * _FurLength * FURSTEP;
+                    P += clamp(mul(unity_WorldToObject, _ForceGlobal).xyz + _ForceLocal.xyz, -1, 1) * pow(FURSTEP, 3) * _FurLength;
+                    o.pos = UnityObjectToClipPos(float4(P, 1.0));
+                    o.uv.xy = TRANSFORM_TEX(v.texcoord, _MainTex);
+                    o.uv.zw = TRANSFORM_TEX(v.texcoord, _FurTex);
+                    //clip(_FurTex.a - _Cutoff);
+                    o.worldNormal = UnityObjectToWorldNormal(v.normal);
+                    o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+                    TRANSFER_SHADOW(o)  
+                    return o;
+                }
+                fixed4 frag_base(v2f i): SV_Target
+                {
+                    fixed3 worldNormal = normalize(i.worldNormal);
+                    fixed3 worldLight = normalize(_WorldSpaceLightPos0.xyz);
+                    fixed3 worldView = normalize(_WorldSpaceCameraPos.xyz - i.worldPos.xyz);
+                    fixed3 worldHalf = normalize(worldView + worldLight);
+                    fixed shadow = SHADOW_ATTENUATION(i);  
+                    
+                    fixed3 albedo = tex2D(_MainTex, i.uv.xy).rgb * _Color;
+                    albedo -= (pow(1 - FURSTEP, 3)) * _FurShading;
+                    half rim = 1.0 - saturate(dot(worldView, worldNormal));
+                    albedo += fixed4(_RimColor.rgb * pow(rim, _RimPower), 1.0);
+                    
+                    
+                    fixed3 ambient = (dot(UNITY_LIGHTMODEL_AMBIENT.xyz,(1,1,1))<0.8?UNITY_LIGHTMODEL_AMBIENT.xyz+(1.5,1.5,1.5):UNITY_LIGHTMODEL_AMBIENT) * albedo*_AOColor;
+                    fixed3 diffuse = _LightColor0.rgb * albedo * saturate(dot(worldNormal, worldLight));
+                    fixed3 lightting = pow(saturate(dot(worldNormal, worldLight)),_ShadowRange);
+                    fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(saturate(dot(worldNormal, worldHalf)), _Shininess);
+                
+                
+                    fixed3 color = ambient + diffuse + specular;
+                    fixed3 noise = tex2D(_FurTex, i.uv.zw * _FurThinness).rgb;
+                   
+                    fixed alpha = clamp(noise - (FURSTEP * FURSTEP) * _FurDensity, 0, 1);
+                    clip(alpha-_Cutoff);
+                
+                    return fixed4(color*(shadow+_ShadowAdjust), alpha*3.5);
+                }
+
+
+                
+                ENDCG              
+            }
+            Pass
+            {
+                CGPROGRAM
+                
+               #pragma vertex vert_base
+               #pragma fragment frag_base
+               #define FURSTEP 0.27
+               #pragma target 3.0
+
+
+                #include "UnityCG.cginc"
+                #include "UnityPBSLighting.cginc"
+                #include "UnityStandardBRDF.cginc"
+                #pragma multi_compile_fwdadd_fullshadows
+                #pragma multi_compile_fwdbase
+                #include "Lighting.cginc" 
+                #include "AutoLight.cginc"
+
+
+                struct v2f
+                {
+                    float4 pos: SV_POSITION;
+                    half4 uv: TEXCOORD0;
+                    float3 worldNormal: TEXCOORD1;
+                    float3 worldPos: TEXCOORD2;
+                    SHADOW_COORDS(3)
+                };
+
+                fixed4 _Color;
+                fixed4 _Specular;
+                half _Shininess;
+                fixed _ShadowAdjust;
+                half _ShadowRange;
+                half _WindAmplitude;
+                half _WindFrequency;
+                half _WindDistribution;
+                fixed _Cutoff;
+                
+                sampler2D _MainTex;
+                half4 _MainTex_ST;
+                sampler2D _FurTex;
+                half4 _FurTex_ST;
+                
+                fixed _FurLength;
+                fixed _FurDensity;
+                fixed _FurThinness;
+                fixed _FurShading;
+                
+                fixed4 _AOColor;
+                fixed4 _ShadowColor;
+                
+                float4 _ForceGlobal;
+                float4 _ForceLocal;
+                
+                
+                fixed4 _RimColor;
+                half _RimPower;
+
+                v2f vert_base(appdata_base v)
+                {
+                    v2f o;
+                    v.vertex.x += /*abs*/( sin(/*v.vertex.z */ _WindDistribution + _Time.y * _WindFrequency) * _WindAmplitude) * v.texcoord.y*FURSTEP;
+                    v.vertex.y += /*abs*/( cos(/*v.vertex.y */ _WindDistribution + _Time.y * _WindFrequency) * _WindAmplitude) * v.texcoord.y*FURSTEP;
+                
+                    float3 P = v.vertex.xyz + v.normal * _FurLength * FURSTEP;
+                    P += clamp(mul(unity_WorldToObject, _ForceGlobal).xyz + _ForceLocal.xyz, -1, 1) * pow(FURSTEP, 3) * _FurLength;
+                    o.pos = UnityObjectToClipPos(float4(P, 1.0));
+                    o.uv.xy = TRANSFORM_TEX(v.texcoord, _MainTex);
+                    o.uv.zw = TRANSFORM_TEX(v.texcoord, _FurTex);
+                    //clip(_FurTex.a - _Cutoff);
+                    o.worldNormal = UnityObjectToWorldNormal(v.normal);
+                    o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+                    TRANSFER_SHADOW(o)  
+                    return o;
+                }
+                fixed4 frag_base(v2f i): SV_Target
+                {
+                    fixed3 worldNormal = normalize(i.worldNormal);
+                    fixed3 worldLight = normalize(_WorldSpaceLightPos0.xyz);
+                    fixed3 worldView = normalize(_WorldSpaceCameraPos.xyz - i.worldPos.xyz);
+                    fixed3 worldHalf = normalize(worldView + worldLight);
+                    fixed shadow = SHADOW_ATTENUATION(i);  
+                    
+                    fixed3 albedo = tex2D(_MainTex, i.uv.xy).rgb * _Color;
+                    albedo -= (pow(1 - FURSTEP, 3)) * _FurShading;
+                    half rim = 1.0 - saturate(dot(worldView, worldNormal));
+                    albedo += fixed4(_RimColor.rgb * pow(rim, _RimPower), 1.0);
+                    
+                    
+                    fixed3 ambient = (dot(UNITY_LIGHTMODEL_AMBIENT.xyz,(1,1,1))<0.8?UNITY_LIGHTMODEL_AMBIENT.xyz+(1.5,1.5,1.5):UNITY_LIGHTMODEL_AMBIENT) * albedo*_AOColor;
+                    fixed3 diffuse = _LightColor0.rgb * albedo * saturate(dot(worldNormal, worldLight));
+                    fixed3 lightting = pow(saturate(dot(worldNormal, worldLight)),_ShadowRange);
+                    fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(saturate(dot(worldNormal, worldHalf)), _Shininess);
+                
+                
+                    fixed3 color = ambient + diffuse + specular;
+                    fixed3 noise = tex2D(_FurTex, i.uv.zw * _FurThinness).rgb;
+                   
+                    fixed alpha = clamp(noise - (FURSTEP * FURSTEP) * _FurDensity, 0, 1);
+                    clip(alpha-_Cutoff);
+                
+                    return fixed4(color*(shadow+_ShadowAdjust), alpha*3.5);
+                }
+
+
+                
+                ENDCG              
+            }
+            Pass
+            {
+                CGPROGRAM
+                
+               #pragma vertex vert_base
+               #pragma fragment frag_base
+               #define FURSTEP 0.30
+               #pragma target 3.0
+
+
+                #include "UnityCG.cginc"
+                #include "UnityPBSLighting.cginc"
+                #include "UnityStandardBRDF.cginc"
+                #pragma multi_compile_fwdadd_fullshadows
+                #pragma multi_compile_fwdbase
+                #include "Lighting.cginc" 
+                #include "AutoLight.cginc"
+
+
+                struct v2f
+                {
+                    float4 pos: SV_POSITION;
+                    half4 uv: TEXCOORD0;
+                    float3 worldNormal: TEXCOORD1;
+                    float3 worldPos: TEXCOORD2;
+                    SHADOW_COORDS(3)
+                };
+
+                fixed4 _Color;
+                fixed4 _Specular;
+                half _Shininess;
+                fixed _ShadowAdjust;
+                half _ShadowRange;
+                half _WindAmplitude;
+                half _WindFrequency;
+                half _WindDistribution;
+                fixed _Cutoff;
+                
+                sampler2D _MainTex;
+                half4 _MainTex_ST;
+                sampler2D _FurTex;
+                half4 _FurTex_ST;
+                
+                fixed _FurLength;
+                fixed _FurDensity;
+                fixed _FurThinness;
+                fixed _FurShading;
+                
+                fixed4 _AOColor;
+                fixed4 _ShadowColor;
+                
+                float4 _ForceGlobal;
+                float4 _ForceLocal;
+                
+                
+                fixed4 _RimColor;
+                half _RimPower;
+
+                v2f vert_base(appdata_base v)
+                {
+                    v2f o;
+                    v.vertex.x += /*abs*/( sin(/*v.vertex.z */ _WindDistribution + _Time.y * _WindFrequency) * _WindAmplitude) * v.texcoord.y*FURSTEP;
+                    v.vertex.y += /*abs*/( cos(/*v.vertex.y */ _WindDistribution + _Time.y * _WindFrequency) * _WindAmplitude) * v.texcoord.y*FURSTEP;
+                
+                    float3 P = v.vertex.xyz + v.normal * _FurLength * FURSTEP;
+                    P += clamp(mul(unity_WorldToObject, _ForceGlobal).xyz + _ForceLocal.xyz, -1, 1) * pow(FURSTEP, 3) * _FurLength;
+                    o.pos = UnityObjectToClipPos(float4(P, 1.0));
+                    o.uv.xy = TRANSFORM_TEX(v.texcoord, _MainTex);
+                    o.uv.zw = TRANSFORM_TEX(v.texcoord, _FurTex);
+                    //clip(_FurTex.a - _Cutoff);
+                    o.worldNormal = UnityObjectToWorldNormal(v.normal);
+                    o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+                    TRANSFER_SHADOW(o)  
+                    return o;
+                }
+                fixed4 frag_base(v2f i): SV_Target
+                {
+                    fixed3 worldNormal = normalize(i.worldNormal);
+                    fixed3 worldLight = normalize(_WorldSpaceLightPos0.xyz);
+                    fixed3 worldView = normalize(_WorldSpaceCameraPos.xyz - i.worldPos.xyz);
+                    fixed3 worldHalf = normalize(worldView + worldLight);
+                    fixed shadow = SHADOW_ATTENUATION(i);  
+                    
+                    fixed3 albedo = tex2D(_MainTex, i.uv.xy).rgb * _Color;
+                    albedo -= (pow(1 - FURSTEP, 3)) * _FurShading;
+                    half rim = 1.0 - saturate(dot(worldView, worldNormal));
+                    albedo += fixed4(_RimColor.rgb * pow(rim, _RimPower), 1.0);
+                    
+                    
+                    fixed3 ambient = (dot(UNITY_LIGHTMODEL_AMBIENT.xyz,(1,1,1))<0.8?UNITY_LIGHTMODEL_AMBIENT.xyz+(1.5,1.5,1.5):UNITY_LIGHTMODEL_AMBIENT) * albedo*_AOColor;
+                    fixed3 diffuse = _LightColor0.rgb * albedo * saturate(dot(worldNormal, worldLight));
+                    fixed3 lightting = pow(saturate(dot(worldNormal, worldLight)),_ShadowRange);
+                    fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(saturate(dot(worldNormal, worldHalf)), _Shininess);
+                
+                
+                    fixed3 color = ambient + diffuse + specular;
+                    fixed3 noise = tex2D(_FurTex, i.uv.zw * _FurThinness).rgb;
+                   
+                    fixed alpha = clamp(noise - (FURSTEP * FURSTEP) * _FurDensity, 0, 1);
+                    clip(alpha-_Cutoff);
+                
+                    return fixed4(color*(shadow+_ShadowAdjust), alpha*3.5);
+                }
+
+
+                
+                ENDCG              
+            }
+
+            
+        } 
+        
+        Fallback "VertexLit"
+   }
+}       
