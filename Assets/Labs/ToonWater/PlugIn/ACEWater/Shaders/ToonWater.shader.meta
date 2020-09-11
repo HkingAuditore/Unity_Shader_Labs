@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 0e8a5cde80dafc241a5fc009ae61c133
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures:
+  - _NormalMap1: {fileID: 2800000, guid: a6472d3ac6f8173458bd73f66710e618, type: 3}
+  - _FoamTexture1: {fileID: 2800000, guid: 9bcc0538ff18cfa4b962f477ae06711d, type: 3}
+  - _CausticsTexture1: {fileID: 2800000, guid: 89d36441cc98b6a43a20ba938c57741d, type: 3}
+  - _NoiseTexture1: {fileID: 2800000, guid: 9ba1cb507c1a0df40bbc151b84efdcec, type: 3}
+  - _SkyCube1: {fileID: 8900000, guid: 65844975f3a977b419b0d5fdff86f07a, type: 3}
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
