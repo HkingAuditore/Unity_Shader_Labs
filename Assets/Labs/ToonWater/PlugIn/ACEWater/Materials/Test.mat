@@ -24,7 +24,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _FoamTexture:
-        m_Texture: {fileID: 2800000, guid: 9bcc0538ff18cfa4b962f477ae06711d, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NoiseTexture:
@@ -36,20 +36,20 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SkyCube:
-        m_Texture: {fileID: 8900000, guid: 646b84bd1703066449c69c8492b51150, type: 3}
+        m_Texture: {fileID: 8900000, guid: 65844975f3a977b419b0d5fdff86f07a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _CausticMaxDepth: 14.48
-    - _CausticsIntensity: 0.364
-    - _CausticsUVTileTotal: 0.15
-    - _DistanceFadeMin: 0
+    - _CausticsIntensity: 1
+    - _CausticsUVTileTotal: 0.05
+    - _DistanceFadeMin: -22.7
     - _DistanceFadeMin1: 60
     - _DistanceFadeWidth: 300
     - _DistanceFadeWidth1: -60
     - _FeflectionMaxDepth: 5.77
-    - _FoamDensity01: 0.461
-    - _FoamDensity11: 0.946
+    - _FoamDensity01: 0.29
+    - _FoamDensity11: 0.73
     - _FoamUVTileTotal: 0.2
     - _FoamWidth01: 0.305
     - _FoamWidth02: 0.818
@@ -58,44 +58,45 @@ Material:
     - _FoamWidth12: 0.3
     - _GerstnerGroup1: 1
     - _GerstnerGroup2: 0
-    - _GlitteringClamp: 0.219
-    - _GlitteringPow: 479
+    - _GlitteringClamp: 0.05
+    - _GlitteringPow: 0
     - _GlitteringScale: 0
-    - _MaxDepth: 5.92
+    - _MaxDepth: 4.42
     - _NoiseIndensity: 0.22
     - _NoiseScale: 0.01
-    - _NormalScale: 1
-    - _NormalUVTileTotal: 0.3
-    - _Refraction: -0.2
+    - _NormalScale: 0.51
+    - _NormalUVTileTotal: 0.19
+    - _Refraction: 0.25
     - _RefractionDepthScale: 10
     - _RefractionMaxDepth: 16.54
-    - _RefractionScale: 3.51
-    - _SkyFresnelBias: -0.01
-    - _SkyFresnelPower: -0.5
-    - _SkyFresnelScale: 0.11
-    - _SkyScale: 0.431
-    - _Smoohness: 0
-    - _SunInensity: 0.31
-    - _SunShininess: 125
-    - _TessFactor: 16
-    - _TessMaxDistance: 120
+    - _RefractionScale: 3.89
+    - _SkyFresnelBias: 0.17
+    - _SkyFresnelPower: 0.14
+    - _SkyFresnelScale: 0.04
+    - _SkyScale: 0.45
+    - _Smoohness: 0.55
+    - _SunInensity: 4.8
+    - _SunShininess: 572
+    - _TessFactor: 15
+    - _TessMaxDistance: 211
     - _TessMinDistance: 0
-    - _WaveHeight00: 1.32
-    - _WaveHeight01: 0.99
-    - _WaveHeight02: -0.14
-    - _WaveHeight10: 0.09
-    - _WaveHeight11: 0.19
-    - _WaveHeight12: 0.02
-    - _WaveHeight20: 0.2
-    - _WaveHeight21: 0.1
+    - _TopHeight: -1.7
+    - _WaveHeight00: 0.85
+    - _WaveHeight01: 0.92
+    - _WaveHeight02: 0.35
+    - _WaveHeight10: 0.13
+    - _WaveHeight11: 0.11
+    - _WaveHeight12: 0.04
+    - _WaveHeight20: 0.18
+    - _WaveHeight21: 0.23
     - _WaveHeight22: 0.2
-    - _WaveSteepness00: 0.708
-    - _WaveSteepness01: 3.25
-    - _WaveSteepness02: 3.16
-    - _WaveSteepness10: 0.22
-    - _WaveSteepness11: 0.22
-    - _WaveSteepness12: 3.96
-    - _WaveSteepness20: 1
+    - _WaveSteepness00: 0.26
+    - _WaveSteepness01: 0.39
+    - _WaveSteepness02: 0.29
+    - _WaveSteepness10: 0.57
+    - _WaveSteepness11: 0.28
+    - _WaveSteepness12: 0.38
+    - _WaveSteepness20: 0.68
     - _WaveSteepness21: 1
     - _WaveSteepness22: 1
     - __dirty: 0
@@ -105,28 +106,30 @@ Material:
     - _FoamColor: {r: 0.8490566, g: 0.8490566, b: 0.8490566, a: 1}
     - _FoamUVMapMoveScale0: {r: -0.03, g: 0.04, b: 1.04, a: 0}
     - _FoamUVMapMoveScale1: {r: -0.05, g: -0.04, b: 0.46, a: 0}
-    - _FogColor: {r: 0, g: 0.23190647, b: 0.254717, a: 0.6509804}
+    - _FogColor: {r: 0.26179245, g: 0.47709545, b: 0.5, a: 0.6509804}
     - _FogColor1: {r: 1, g: 1, b: 1, a: 0.07058824}
     - _LightDir: {r: 0, g: -1, b: 0, a: 0}
     - _NoiseVector: {r: 1, g: 1, b: 1, a: 1}
-    - _NormalUVMapMoveScale0: {r: 0.001, g: 0.1, b: 0.2, a: 0}
+    - _NormalUVMapMoveScale0: {r: -0.09, g: 0.37, b: 0.2, a: 0}
     - _NormalUVMapMoveScale1: {r: 0.03, g: 0.001, b: 0.5, a: 0}
-    - _ScatteringColor: {r: 0, g: 0.792304, b: 1, a: 0.7882353}
+    - _ScatteringColor: {r: 0, g: 1, b: 1, a: 1}
     - _ScatteringColor1: {r: 0, g: 1, b: 0.7911868, a: 0.3137255}
+    - _ScatteringColor2: {r: 0.19958171, g: 0.3354873, b: 0.6132076, a: 0.6392157}
     - _ShadowColor: {r: 0, g: 1, b: 0.2745099, a: 1}
     - _ShadowColor1: {r: 0, g: 0.4716981, b: 0.23669454, a: 1}
     - _Specular: {r: 0, g: 0, b: 0, a: 0}
     - _SunColor: {r: 1, g: 1, b: 1, a: 0}
     - _SunDir: {r: 0.54, g: 1.76, b: 7.03, a: 0}
-    - _WaterColor: {r: 0.051886797, g: 0.24614686, b: 1, a: 0.7607843}
+    - _TopColor: {r: 0.33819866, g: 0.6515427, b: 0.754717, a: 0.91764706}
+    - _WaterColor: {r: 0, g: 0, b: 0, a: 1}
     - _WaterColor1: {r: 0, g: 0.35566998, b: 1, a: 1}
-    - _WaterColor2: {r: 0.740566, g: 1, b: 0.77617466, a: 0.59607846}
-    - _WaveParam00: {r: -0.4, g: 0.1, b: 1.29, a: 2.83}
-    - _WaveParam01: {r: 0.37, g: -0.56, b: 6.43, a: 2.29}
-    - _WaveParam02: {r: 0.54, g: -0.53, b: 1, a: 1}
-    - _WaveParam10: {r: -0.11, g: 0.19, b: 0.18, a: 1}
-    - _WaveParam11: {r: 0.88, g: 0.64, b: 1.18, a: 1}
-    - _WaveParam12: {r: -0.12, g: 0.07, b: 0.05, a: 0.2}
+    - _WaterColor2: {r: 1, g: 1, b: 1, a: 0.85490197}
+    - _WaveParam00: {r: -0.4, g: 0.1, b: 1.38, a: 2.83}
+    - _WaveParam01: {r: 0.37, g: -0.56, b: 9.67, a: 2.29}
+    - _WaveParam02: {r: 0.54, g: 0.35, b: 1, a: 1}
+    - _WaveParam10: {r: -0.11, g: 0.19, b: 0.12, a: 1}
+    - _WaveParam11: {r: 0.46, g: 0.49, b: 0.98, a: 1}
+    - _WaveParam12: {r: 0.09, g: 0.06, b: 0.05, a: 0.2}
     - _WaveParam20: {r: 1, g: 0, b: 0.5, a: 1}
     - _WaveParam21: {r: 1, g: 1, b: 0.5, a: 1}
     - _WaveParam22: {r: 0, g: -0.75, b: 0.5, a: 2}
