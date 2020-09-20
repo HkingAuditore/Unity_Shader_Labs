@@ -59,11 +59,15 @@
 			v2f vert(appdata v)
 			{
 				v2f o;
+				
+				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+				fixed4 texCol = tex2Dlod(_MainTex, float4(o.uv, 0, 0));
+				
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.vertex.y += 0.6 * cos(0.84 * v.vertex.x + 0.73 * v.vertex.z - 0.83 * _Time.y)
 							+ 0.3 * cos(0.92 * v.vertex.x + 0.86 * v.vertex.z - 1.9 * _Time.y)
 							+ 0.2 * cos(1.856 * v.vertex.x + 0.952 * v.vertex.z - 0.70 * _Time.y);
-				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+				o.vertex.y += (texCol.x+texCol.y+texCol.z)*0.333;
 				o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 				o.worldNormal = UnityObjectToWorldNormal(v.normal);
 				return o;
@@ -86,6 +90,8 @@
 				bary1 = float3(g1.barycentricCoordinates, 1 - g1.barycentricCoordinates.x - g1.barycentricCoordinates.y);
 				bary2 = float3(g2.barycentricCoordinates, 1 - g2.barycentricCoordinates.x - g2.barycentricCoordinates.y);
 
+				
+				
 				g0.data.color = bary0;
 				g1.data.color = bary1;
 				g2.data.color = bary2;
@@ -162,7 +168,7 @@
 				float minB = min(i.data.color.x, min(i.data.color.y, i.data.color.z));
 				i.data.color = smoothstep(0, fwidth(minB), minB);
 				float4 col;
-				col.rgb = diffuse * texCol;
+				col.rgb = diffuse;
 				return col;
 			}
 			ENDCG

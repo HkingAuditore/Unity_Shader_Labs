@@ -1,16 +1,22 @@
 ﻿#pragma kernel CreateWaveRenderTexture
+#pragma kernel ComputeGaussianRandom
 
 #define PI 3.14159274f
 #define G 9.81f
+#include <UnityShaderVariables.cginc>
 
-float input;
+float4 WindAndSeed;
 
+
+RWTexture2D<float4> GaussianRandomRT;		
 RWTexture2D<float4> Result;
+
 uint rngState;
 int N;
+float Time;
 
 //随机种子
-uint wangHash(uint seed)
+uint Hash(uint seed)
 {
     seed = (seed ^ 61) ^(seed >> 16);
     seed *= 9;
@@ -20,7 +26,7 @@ uint wangHash(uint seed)
     return seed;
 }
 //计算均匀分布随机数[0,1)
-float rand()
+float Rand()
 {
     // Xorshift算法
     rngState ^= (rngState << 13);
@@ -30,12 +36,12 @@ float rand()
 }
 
 //计算高斯随机数
-float2 gaussian(float2 id)
+float2 Gaussian(float2 id)
 {
     //均匀分布随机数
-    rngState = wangHash(id.y * N + id.x);
-    float x1 = rand();
-    float x2 = rand();
+    rngState =Hash(id.y * N + id.x);
+    float x1 = Rand();
+    float x2 = Rand();
 
     x1 = max(1e-6f, x1);
     x2 = max(1e-6f, x2);
@@ -46,9 +52,91 @@ float2 gaussian(float2 id)
     return float2(g1, g2);
 }
 
+//复数相乘
+float2 complexMultiply(float2 c1, float2 c2)
+{
+    return float2(c1.x * c2.x - c1.y * c2.y,c1.x * c2.y + c1.y * c2.x);
+}
+
+//计算高斯随机变量
+[numthreads(8, 8, 1)]
+void ComputeGaussianRandom(uint3 id: SV_DispatchThreadID)
+{
+    float2 g = Gaussian(id.xy);
+
+    GaussianRandomRT[id.xy] = float4(g, 0, 0);
+}
+
+//计算phillips谱
+float phillips(float2 k)
+{
+    float kLength = length(k);
+    kLength = max(0.001f, kLength);
+    // kLength = 1;
+    float kLength2 = kLength * kLength;
+    float kLength4 = kLength2 * kLength2;
+
+    float windLength = length(WindAndSeed.xy);
+    float  l = windLength * windLength / G;
+    float l2 = l * l;
+
+    float damping = 0.001f;
+    float L2 = l2 * damping * damping;
+
+    //phillips谱
+    return  10 * exp(-1.0f / (kLength2 * l2)) / kLength4 * exp(-kLength2 * L2);
+}
+
+
+//计算弥散
+float dispersion(float2 k)
+{
+    return sqrt(G * length(k));
+}
+
+//Donelan-Banner方向拓展
+float DonelanBannerDirectionalSpreading(float2 k)
+{
+    float betaS;
+    float omegap = 0.855f * G / length(WindAndSeed.xy);
+    float ratio = dispersion(k) / omegap;
+
+    if (ratio < 0.95f)
+    {
+        betaS = 2.61f * pow(ratio, 1.3f);
+    }
+    if(ratio >= 0.95f && ratio < 1.6f)
+    {
+        betaS = 2.28f * pow(ratio, -1.3f);
+    }
+    if(ratio > 1.6f)
+    {
+        float epsilon = -0.4f + 0.8393f * exp(-0.567f * log(ratio * ratio));
+        betaS = pow(10, epsilon);
+    }
+    float theta = atan2(k.y, k.x) - atan2(WindAndSeed.y, WindAndSeed.x);
+
+    return betaS / max(1e-7f, 2.0f * tanh(betaS * PI) * pow(cosh(betaS * theta), 2));
+}
+
 [numthreads(8,8,1)]
 void CreateWaveRenderTexture(uint3 id : SV_DispatchThreadID)
 {
-    float2 g = gaussian(id.xy);
-    Result[id.xy] = float4(g,0,1);
+    float2 k = float2(2.0f * PI * id.x / N - PI, 2.0f * PI * id.y / N - PI);
+
+    float2 gaussian = GaussianRandomRT[id.xy].xy;
+
+    float2 hTilde0 = gaussian * sqrt(abs(phillips(k) * DonelanBannerDirectionalSpreading(k)) / 2.0f);
+    float2 hTilde0Conj = gaussian * sqrt(abs(phillips(-k) * DonelanBannerDirectionalSpreading(-k)) / 2.0f);
+    hTilde0Conj.y *= -1.0f;
+
+    float omegat = dispersion(k) * Time;
+    float c = cos(omegat);
+    float s = sin(omegat);
+    
+    float2 h1 = complexMultiply(hTilde0, float2(c, s));
+    float2 h2 = complexMultiply(hTilde0Conj, float2(c, -s));
+
+    float2 HTilde = h1 + h2;
+    Result[id.xy] = float4(HTilde, 0, 0);
 }
