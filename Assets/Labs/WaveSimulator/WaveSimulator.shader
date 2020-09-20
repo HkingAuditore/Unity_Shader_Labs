@@ -3,6 +3,8 @@
 	Properties
 	{
 		_MainTex("Texture", 2D) = "white" {}
+		_OceanColor("Ocean Color",Color) = (1,1,1,1)
+		_FoamColor("Foam Color",Color) = (1,1,1,1)
 		_TessellationEdgeLength("Tessellation Edge Length", Range(5, 1000)) = 50
 		_TessellationIntensity("Tessellation Intensity", Range(1, 5)) = 2
 	}
@@ -38,6 +40,7 @@
 				float3 worldPos:TEXCOORD1;
 				float3 worldNormal:TEXCOORD2;
 				float3 color:TEXCOORD3;
+				
 			};
 
 			struct g2f {
@@ -50,17 +53,22 @@
 			float _TessellationEdgeLength;
 			float _TessellationIntensity;
 
+			fixed4 _OceanColor;
+			fixed4 _FoamColor;
+
 			v2f vert(appdata v)
 			{
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
+				o.vertex.y += 0.6 * cos(0.84 * v.vertex.x + 0.73 * v.vertex.z - 0.83 * _Time.y)
+							+ 0.3 * cos(0.92 * v.vertex.x + 0.86 * v.vertex.z - 1.9 * _Time.y)
+							+ 0.2 * cos(1.856 * v.vertex.x + 0.952 * v.vertex.z - 0.70 * _Time.y);
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 				o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 				o.worldNormal = UnityObjectToWorldNormal(v.normal);
 				return o;
 			}
 
-			//三点细分
 			[maxvertexcount(3)]
 			void geo(triangle v2f IN[3], inout TriangleStream<g2f> tristream)
 			{
@@ -149,11 +157,12 @@
 				float3 halfDir = normalize(worldLightDir + worldView);
 				float diff = max(dot(worldNormal, worldLightDir), 0);
 				float3 diffuse = diff * _LightColor0;
+				fixed4 texCol = tex2D(_MainTex, i.data.uv);
 
 				float minB = min(i.data.color.x, min(i.data.color.y, i.data.color.z));
 				i.data.color = smoothstep(0, fwidth(minB), minB);
 				float4 col;
-				col.rgb = diffuse;
+				col.rgb = diffuse * texCol;
 				return col;
 			}
 			ENDCG

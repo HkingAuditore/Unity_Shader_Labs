@@ -1,0 +1,54 @@
+﻿#pragma kernel CreateWaveRenderTexture
+
+#define PI 3.14159274f
+#define G 9.81f
+
+float input;
+
+RWTexture2D<float4> Result;
+uint rngState;
+int N;
+
+//随机种子
+uint wangHash(uint seed)
+{
+    seed = (seed ^ 61) ^(seed >> 16);
+    seed *= 9;
+    seed = seed ^(seed >> 4);
+    seed *= 0x27d4eb2d;
+    seed = seed ^(seed >> 15);
+    return seed;
+}
+//计算均匀分布随机数[0,1)
+float rand()
+{
+    // Xorshift算法
+    rngState ^= (rngState << 13);
+    rngState ^= (rngState >> 17);
+    rngState ^= (rngState << 5);
+    return rngState / 4294967296.0f;;
+}
+
+//计算高斯随机数
+float2 gaussian(float2 id)
+{
+    //均匀分布随机数
+    rngState = wangHash(id.y * N + id.x);
+    float x1 = rand();
+    float x2 = rand();
+
+    x1 = max(1e-6f, x1);
+    x2 = max(1e-6f, x2);
+    //计算两个相互独立的高斯随机数
+    float g1 = sqrt(-2.0f * log(x1)) * cos(2.0f * PI * x2);
+    float g2 = sqrt(-2.0f * log(x1)) * sin(2.0f * PI * x2);
+
+    return float2(g1, g2);
+}
+
+[numthreads(8,8,1)]
+void CreateWaveRenderTexture(uint3 id : SV_DispatchThreadID)
+{
+    float2 g = gaussian(id.xy);
+    Result[id.xy] = float4(g,0,1);
+}

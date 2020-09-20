@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Test
+  m_Name: ToonTest
   m_Shader: {fileID: 4800000, guid: 66b7a9fe28b80dd4a97411fa02ea1885, type: 3}
   m_ShaderKeywords: _GERSTNERGROUP1_ON
   m_LightmapFlags: 0
@@ -64,12 +64,12 @@ Material:
     - _MaxDepth: 4.42
     - _NoiseIndensity: 0.22
     - _NoiseScale: 0.01
-    - _NormalScale: 0.51
+    - _NormalScale: 0.9
     - _NormalUVTileTotal: 0.19
-    - _Refraction: 0.25
-    - _RefractionDepthScale: 10
-    - _RefractionMaxDepth: 16.54
-    - _RefractionScale: 3.89
+    - _Refraction: 0.27
+    - _RefractionDepthScale: 26.3
+    - _RefractionMaxDepth: 17.97
+    - _RefractionScale: 2.93
     - _SkyFresnelBias: 0.17
     - _SkyFresnelPower: 0.14
     - _SkyFresnelScale: 0.04
@@ -81,10 +81,10 @@ Material:
     - _TessMaxDistance: 211
     - _TessMinDistance: 0
     - _TopHeight: -1.7
-    - _WaveHeight00: 0.85
-    - _WaveHeight01: 0.92
+    - _WaveHeight00: 1.32
+    - _WaveHeight01: 1.04
     - _WaveHeight02: 0.35
-    - _WaveHeight10: 0.13
+    - _WaveHeight10: 0.06
     - _WaveHeight11: 0.11
     - _WaveHeight12: 0.04
     - _WaveHeight20: 0.18
