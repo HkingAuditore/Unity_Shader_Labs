@@ -68,7 +68,7 @@ void CreateHeightSpectrum(uint3 id: SV_DispatchThreadID)
     float2 hTilde0Conj = gaussian * sqrt(abs(phillips(-k) * DonelanBannerDirectionalSpreading(-k)) / 2.0f);
     hTilde0Conj.y *= -1.0f;
 
-    float omegat = dispersion(k) * _Time.y;
+    float omegat = dispersion(k) * Time;
     float c = cos(omegat);
     float s = sin(omegat);
     

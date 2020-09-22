@@ -15,6 +15,7 @@ uint rngState;
 int N;
 float Time;
 
+
 //随机种子
 uint Hash(uint seed)
 {

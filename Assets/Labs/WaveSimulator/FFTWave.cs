@@ -12,7 +12,7 @@ public class FFTWave : MonoBehaviour
     private RenderTexture _testRT;
     private RenderTexture _gaussianRandomRT;
     
-    private Material _material;
+    private Renderer _renderer;
     private int _renderTextureSize = 128;
     
     private static readonly int MainTex = Shader.PropertyToID("_MainTex");
@@ -24,7 +24,7 @@ public class FFTWave : MonoBehaviour
 
     private void Awake()
     {
-        _material = this.GetComponent<Renderer>().material;
+        _renderer = this.GetComponent<Renderer>();
         
         _testRT = CreateRenderTexture(_renderTextureSize);
         
@@ -38,7 +38,7 @@ public class FFTWave : MonoBehaviour
     private void Start()
     {
         GetRenderTexture("CreateWaveRenderTexture", ref _testRT);
-        _material.SetTexture(MainTex,_testRT);
+        _renderer.sharedMaterial.SetTexture(MainTex,_testRT);
     }
 
     private void Update()

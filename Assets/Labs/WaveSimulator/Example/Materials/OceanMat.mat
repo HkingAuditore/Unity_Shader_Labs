@@ -33,7 +33,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _BubblesI: 8.3
-    - _FresnelScale: 0.02
+    - _FresnelScale: 0.051
     - _Gloss: 256
     - _Speed: 0
     m_Colors:
