@@ -199,12 +199,21 @@
 				// float minB = min(i.data.color.x, min(i.data.color.y, i.data.color.z));
 				// i.data.color = smoothstep(0, fwidth(minB), minB);
 				
-				float fresnel = pow( 1.0 - dot(i.data.worldNormal, normalize( UnityWorldSpaceViewDir(i.data.worldPos) ) ), 1.336 * _Range * i.data.fade);
+				float fresnel = pow( 1.0 - dot(i.data.worldNormal, normalize(UnityWorldSpaceViewDir(i.data.worldPos))), 1.636);
+				float farControl = _Range * pow(i.data.fade,2.01);
+				fresnel = pow(lerp(fresnel,farControl,0.2),1/farControl);
+				//fresnel = 1.0 - pow(lerp(0.1,0.6,farControl),fresnel);
 				fixed3 specular = _LightColor0.rgb * _OceanSpecularColor.rgb * pow(max(0.0,dot(reflectDir, halfDir)), 1 / _Gloss);
 				
 				float4 col = fixed4(0,0,0,1);
-				col.rgb = lerp(_OceanDeepColor,_OceanShallowColor,smoothstep(0.1,.5,pow(fresnel,_Range)) * _Fresnel) * (specular + diffuse + ambient ) * smoothstep(_OceanDeepColor,_OceanShallowColor,_OceanShallowColor * 20);
+				col.rgb = lerp(	_OceanDeepColor,
+								_OceanShallowColor,
+								smoothstep(0.1,.5,fresnel * _Fresnel) * (specular + diffuse + ambient ) * smoothstep(_OceanDeepColor,_OceanShallowColor,_OceanShallowColor * 20));
 
+				//return col;
+				return fixed4(worldNormal,1);
+			
+				//return fixed4(farControl,farControl,farControl,1);
 				return fixed4(fresnel,fresnel,fresnel,1);
 			}
 			ENDCG

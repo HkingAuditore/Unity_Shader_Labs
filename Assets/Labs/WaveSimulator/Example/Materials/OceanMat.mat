@@ -23,6 +23,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Caustics:
+        m_Texture: {fileID: 2800000, guid: 4c2e9eb99362e564db79b72947049751, type: 3}
+        m_Scale: {x: 16, y: 16}
+        m_Offset: {x: 0, y: 0}
     - _Displace:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -33,12 +37,24 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _BubblesI: 8.3
-    - _FresnelScale: 0.051
-    - _Gloss: 256
+    - _CausticsGrow: 7.57
+    - _CausticsIntensity: 1.61
+    - _CausticsOffset: 0.0051
+    - _CausticsRange: 0.293
+    - _CausticsSpeed: 0.015
+    - _EdgeRange: 0.182
+    - _EmissionStrength: 3.7
+    - _FresnelScale: 0.228
+    - _Gloss: 234
+    - _SSSHeight: 4.69
+    - _SSSPow: 1.04
+    - _ShoreRange: 0.266
     - _Speed: 0
     m_Colors:
     - _BubblesColor: {r: 1, g: 1, b: 1, a: 1}
     - _OceanColor: {r: 0.008098972, g: 0.24528301, b: 0.22817545, a: 1}
-    - _OceanColorDeep: {r: 0.0499288, g: 0.1436479, b: 0.20754719, a: 1}
-    - _OceanColorShallow: {r: 0.30713776, g: 0.4703595, b: 0.5471698, a: 1}
-    - _Specular: {r: 0.3962264, g: 0.3943574, b: 0.3943574, a: 1}
+    - _OceanColorDeep: {r: 0.046858337, g: 0.45453337, b: 0.764151, a: 1}
+    - _OceanColorFre: {r: 0.48700607, g: 0.60134095, b: 0.6037736, a: 1}
+    - _OceanColorSSS: {r: 0.042000007, g: 0.126, b: 0.042000007, a: 0.003921569}
+    - _OceanColorShallow: {r: 0.10693307, g: 0.60632825, b: 0.8396226, a: 1}
+    - _Specular: {r: 0.3915094, g: 0.94540083, b: 1, a: 1}
