@@ -38,19 +38,17 @@ Material:
     m_Floats:
     - _BubblesI: 8.3
     - _CausticsGrow: 7.57
-    - _CausticsIntensity: 1.42
+    - _CausticsIntensity: 1.61
     - _CausticsOffset: 0.0051
     - _CausticsRange: 0.293
     - _CausticsSpeed: 0.015
     - _EdgeRange: 0.182
     - _EmissionStrength: 3.7
-    - _FracIntensity: 0.5
     - _FresnelScale: 0.228
     - _Gloss: 234
     - _SSSHeight: 4.69
-    - _SSSIntensity: 0.5
     - _SSSPow: 1.04
-    - _ShoreRange: 0.262
+    - _ShoreRange: 0.266
     - _Speed: 0
     m_Colors:
     - _BubblesColor: {r: 1, g: 1, b: 1, a: 1}
