@@ -356,7 +356,6 @@ GameObject:
   - component: {fileID: 903851362}
   - component: {fileID: 903851361}
   - component: {fileID: 903851360}
-  - component: {fileID: 903851365}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -445,18 +444,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: -0.651, z: 0}
---- !u!114 &903851365
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 903851359}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57947164fd7d4bc4f9334117047eaadd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1328332523
 GameObject:
   m_ObjectHideFlags: 0
@@ -654,6 +641,7 @@ GameObject:
   - component: {fileID: 1407817175}
   - component: {fileID: 1407817176}
   - component: {fileID: 1407817177}
+  - component: {fileID: 1407817178}
   m_Layer: 0
   m_Name: Ocean
   m_TagString: Untagged
@@ -720,6 +708,18 @@ MonoBehaviour:
   BubblesMat: {fileID: 2100000, guid: 86e7424bb1b596a479ad09fb8f351466, type: 2}
   ControlM: 12
   isControlH: 1
+--- !u!114 &1407817178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1407817174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57947164fd7d4bc4f9334117047eaadd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1739939008
 GameObject:
   m_ObjectHideFlags: 0
