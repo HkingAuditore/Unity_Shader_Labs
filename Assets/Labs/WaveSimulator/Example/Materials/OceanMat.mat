@@ -38,7 +38,7 @@ Material:
     m_Floats:
     - _BubblesI: 8.3
     - _CausticsGrow: 12.72
-    - _CausticsIntensity: 0.74
+    - _CausticsIntensity: 0.88
     - _CausticsOffset: 0.0339
     - _CausticsRange: 0.293
     - _CausticsSpeed: 0.015
@@ -47,10 +47,10 @@ Material:
     - _FracIntensity: 4.2
     - _FracTransparency: 0.605
     - _FresnelScale: 0.251
-    - _Gloss: 5.32
+    - _Gloss: 1
     - _LinearShoreGradient: 107.3
     - _LinearShoreRange: 68.39
-    - _SSSHeight: 4.69
+    - _SSSHeight: 10.53
     - _SSSIntensity: 0.22
     - _SSSPow: 3.26
     - _ShoreRange: 0.08
@@ -60,8 +60,8 @@ Material:
     - _BubblesColor: {r: 1, g: 1, b: 1, a: 1}
     - _FoamColor: {r: 1, g: 1, b: 1, a: 1}
     - _OceanColor: {r: 0.008098972, g: 0.24528301, b: 0.22817545, a: 1}
-    - _OceanColorDeep: {r: 0.07756319, g: 0.47847787, b: 0.7830189, a: 1}
+    - _OceanColorDeep: {r: 0.13594696, g: 0.4063946, b: 0.6132076, a: 1}
     - _OceanColorFre: {r: 0.48700607, g: 0.60134095, b: 0.6037736, a: 1}
     - _OceanColorSSS: {r: 0, g: 2.6390157, b: 0, a: 0.003921569}
-    - _OceanColorShallow: {r: 0.06808474, g: 0.6026538, b: 0.8490566, a: 1}
-    - _Specular: {r: 0.6556604, g: 0.96889824, b: 1, a: 1}
+    - _OceanColorShallow: {r: 0.121568605, g: 0.4756007, b: 0.6313726, a: 1}
+    - _Specular: {r: 0.9761126, g: 0.6650944, b: 1, a: 1}
