@@ -43,17 +43,17 @@ Material:
     - _CausticsRange: 0.293
     - _CausticsSpeed: 0.015
     - _EdgeRange: 0.182
-    - _EmissionStrength: 7.7
+    - _EmissionStrength: 2.87
     - _FracIntensity: 4.2
-    - _FracTransparency: 0.605
+    - _FracTransparency: 0.58
     - _FresnelScale: 0.251
     - _Gloss: 5.32
     - _LinearShoreGradient: 107.3
-    - _LinearShoreRange: 68.39
-    - _SSSHeight: 4.69
+    - _LinearShoreRange: 80.6
+    - _SSSHeight: 10.24
     - _SSSIntensity: 0.22
-    - _SSSPow: 3.26
-    - _ShoreRange: 0.08
+    - _SSSPow: 0.9
+    - _ShoreRange: 0.18
     - _ShoreTransparency: 1
     - _Speed: 0
     m_Colors:
@@ -62,6 +62,7 @@ Material:
     - _OceanColor: {r: 0.008098972, g: 0.24528301, b: 0.22817545, a: 1}
     - _OceanColorDeep: {r: 0.07756319, g: 0.47847787, b: 0.7830189, a: 1}
     - _OceanColorFre: {r: 0.48700607, g: 0.60134095, b: 0.6037736, a: 1}
-    - _OceanColorSSS: {r: 0, g: 2.6390157, b: 0, a: 0.003921569}
+    - _OceanColorSSS: {r: 0.14434874, g: 0.45400003, b: 0.04190769, a: 0.015686275}
     - _OceanColorShallow: {r: 0.06808474, g: 0.6026538, b: 0.8490566, a: 1}
     - _Specular: {r: 0.6556604, g: 0.96889824, b: 1, a: 1}
+  m_BuildTextureStacks: []
