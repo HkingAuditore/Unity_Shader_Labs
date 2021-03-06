@@ -226,11 +226,10 @@ Shader "Scarecrow/Ocean"
 
                 fixed4 sss = CalculateSSSColor(lightDir,normal,viewDir,i.worldPos.y + _SSSHeight,_SSSIntensity);
                 fixed3 col = ambient + lerp(diffuse, _OceanColorFre, fresnel) + specular ;
-                col +=  _CausticsIntensity * caustics;
                 col = (1-sss.a)*col+sss.a*sss;
                 col = col * (1-fra.a) + fra * fra.a;
     
-                
+                col +=  _CausticsIntensity * caustics;
                 
                 col = col * (1-foamCol.a) + foamCol * foamCol.a;
                 

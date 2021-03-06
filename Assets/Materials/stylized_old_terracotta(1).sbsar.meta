@@ -9,16 +9,16 @@ ScriptedImporter:
   assetBundleVariant: 
   script: {fileID: 232528478, guid: 43a8bbf65be290d44ba52b94476242b9, type: 3}
   version: 29
-  projectContext: 0
+  projectContext: -1
   mGraphInstanceData:
   - graphLabel: Stylized Old Terracotta
     prototypeName: Stylized Old Terracotta
     graphDescIndex: 0
     generateAllOutputs: 0
     generateMipMaps: 1
-    preset: " <sbspreset pkgurl=\"pkg://stylized_old_terracotta\" label=\"\" >\n 
-      <presetinput identifier=\"$outputsize\" uid=\"2082555328\" type=\"8\" value=\"9,9\"
-      />\n  <presetinput identifier=\"plaster_second_color_intensity\" uid=\"345385870\"
+    preset: " <sbspreset pkgurl=\"pkg://stylized_old_terracotta\" label=\"\" >\n  <presetinput
+      identifier=\"$outputsize\" uid=\"2082555328\" type=\"8\" value=\"9,9\" />\n
+      \ <presetinput identifier=\"plaster_second_color_intensity\" uid=\"345385870\"
       type=\"0\" value=\"0.985\" />\n  <presetinput identifier=\"plaster_roughness\"
       uid=\"351564181\" type=\"0\" value=\"0.702\" />\n </sbspreset>\n"
     shaderName: Standard
