@@ -79,4 +79,3 @@ Material:
     - _FoamColor: {r: 0.5735294, g: 0.5735294, b: 0.5735294, a: 1}
     - _OceanColor: {r: 0, g: 0.28610557, b: 0.45588237, a: 1}
     - _Specular: {r: 0.75, g: 0.75, b: 0.75, a: 1}
-  m_BuildTextureStacks: []
