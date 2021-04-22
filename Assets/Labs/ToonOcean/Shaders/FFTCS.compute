@@ -60,22 +60,26 @@ void ComputeGaussianRandom(uint3 id: SV_DispatchThreadID)
 [numthreads(8, 8, 1)]
 void CreateHeightSpectrum(uint3 id: SV_DispatchThreadID)
 {
+    //k = (2PIn/lx,2PIm/lz)
     float2 k = float2(2.0f * PI * id.x / N - PI, 2.0f * PI * id.y / N - PI);
 
     float2 gaussian = GaussianRandomRT[id.xy].xy;
 
-    float2 hTilde0 = gaussian * sqrt(abs(phillips(k) * DonelanBannerDirectionalSpreading(k)) / 2.0f);
-    float2 hTilde0Conj = gaussian * sqrt(abs(phillips(-k) * DonelanBannerDirectionalSpreading(-k)) / 2.0f);
-    hTilde0Conj.y *= -1.0f;
+    float2 h0 = gaussian * sqrt(abs(phillips(k) * DonelanBannerDirectionalSpreading(k)) / 2.0f);
+    //h0的共轭复数
+    float2 h0Conj = gaussian * sqrt(abs(phillips(-k) * DonelanBannerDirectionalSpreading(-k)) / 2.0f);
+    h0Conj.y *= -1.0f;
 
+    //时间关系
     float omegat = dispersion(k) * Time;
     float c = cos(omegat);
     float s = sin(omegat);
     
-    float2 h1 = complexMultiply(hTilde0, float2(c, s));
-    float2 h2 = complexMultiply(hTilde0Conj, float2(c, -s));
+    float2 h1 = complexMultiply(h0, float2(c, s));
+    float2 h2 = complexMultiply(h0Conj, float2(c, -s));
 
     float2 HTilde = h1 + h2;
+    // float2 HTilde = h1;
 
     HeightSpectrumRT[id.xy] = float4(HTilde, 0, 0);
 }
@@ -84,6 +88,7 @@ void CreateHeightSpectrum(uint3 id: SV_DispatchThreadID)
 void CreateDisplaceSpectrum(uint3 id: SV_DispatchThreadID)
 {
     float2 k = float2(2 * PI * id.x / N - PI, 2 * PI * id.y / N - PI);
+    //均匀散布
     k /= max(0.001f, length(k));
     float2 HTilde = HeightSpectrumRT[id.xy].xy;
 
@@ -282,7 +287,7 @@ float phillips(float2 k)
     float L2 = l2 * damping * damping;
 
     //phillips谱
-    return  A * exp(-1.0f / (kLength2 * l2)) / kLength4 * exp(-kLength2 * L2);
+    return  A * exp(-1.0f / (kLength2 * l2)) / kLength4;
 }
 //随机种子
 uint wangHash(uint seed)

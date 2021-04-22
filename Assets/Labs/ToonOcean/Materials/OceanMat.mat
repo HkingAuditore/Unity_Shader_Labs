@@ -65,3 +65,4 @@ Material:
     - _OceanColorSSS: {r: 1.3085611, g: 3.190907, b: 0.4364921, a: 0.003921569}
     - _OceanColorShallow: {r: 0.11921501, g: 0.27133617, b: 0.4433962, a: 1}
     - _Specular: {r: 0.9761126, g: 0.6650944, b: 1, a: 1}
+  m_BuildTextureStacks: []

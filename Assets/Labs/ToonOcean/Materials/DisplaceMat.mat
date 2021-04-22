@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DisplaceZMat
+  m_Name: DisplaceMat
   m_Shader: {fileID: 4800000, guid: c4fa83f3a04787d4eb20ab357ccdb352, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -79,3 +79,4 @@ Material:
     - _FoamColor: {r: 0.5735294, g: 0.5735294, b: 0.5735294, a: 1}
     - _OceanColor: {r: 0, g: 0.28610557, b: 0.45588237, a: 1}
     - _Specular: {r: 0.75, g: 0.75, b: 0.75, a: 1}
+  m_BuildTextureStacks: []
