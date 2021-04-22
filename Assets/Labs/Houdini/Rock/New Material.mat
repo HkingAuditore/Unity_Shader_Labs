@@ -8,8 +8,9 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: New Material
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: EFFECT_BUMP _DETAIL_MULX2 _NORMALMAP _PARALLAXMAP _TESSELLATIONMODE_DISPLACEMENT
+  m_Shader: {fileID: 4800000, guid: f7e38193b7f064d7380403618fd8b69e, type: 3}
+  m_ShaderKeywords: EFFECT_BUMP _CELPRIMARYMODE_SINGLE _DETAIL_MULX2 _NORMALMAP _PARALLAXMAP
+    _TESSELLATIONMODE_DISPLACEMENT _UNITYSHADOWMODE_NONE
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -26,6 +27,14 @@ Material:
     - _BumpMap:
         m_Texture: {fileID: -2324850155280342480, guid: 9df5415f621d1334e83b2aee072757f2,
           type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CelCurveTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CelStepTexture:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DecalTex:
@@ -64,8 +73,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: -3545901500533339292, guid: 9df5415f621d1334e83b2aee072757f2,
-          type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 2.33, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -126,6 +134,9 @@ Material:
     - _BaseColorVertexTint: 0.87
     - _BumpMode: 0
     - _BumpScale: 3.5
+    - _CelExtraEnabled: 0
+    - _CelNumSteps: 3
+    - _CelPrimaryMode: 1
     - _Cull: 2
     - _Cutoff: 0.379
     - _Decal: 0
@@ -153,12 +164,25 @@ Material:
     - _Emission: 0
     - _EmissionWeight: 1
     - _EnableInstancing: 0
+    - _FlatRimEdgeSmoothness: 0.5
+    - _FlatRimLightAlign: 0
+    - _FlatRimSize: 0.5
+    - _FlatSpecularEdgeSmoothness: 0
+    - _FlatSpecularSize: 0.1
+    - _Flatness: 0.711
+    - _FlatnessExtra: 1
     - _ForwardRenderingOptions: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.422
     - _GlossyReflections: 1
+    - _GradientAngle: 0
+    - _GradientCenterX: 0
+    - _GradientCenterY: 0
+    - _GradientEnabled: 0
+    - _GradientSize: 10
     - _HasBumpMap: 1
     - _IncandescenceMapUV: 0
+    - _LightContribution: 0
     - _Lightmapping: 1
     - _MainPhysicalProperties: 1.01
     - _MainRoughnessSource: 0
@@ -183,17 +207,25 @@ Material:
     - _OrientedSpecularTint: 0
     - _OrientedSpecularity: 1
     - _OrientedTextures: 0
+    - _OutlineDepthOffset: 0.005
+    - _OutlineWidth: 6.03
     - _Parallax: 0.08
     - _ParallaxT: 0
     - _Phong: 1.43
     - _RenderQueue: 0
     - _Rim: 0
     - _RimBias: 0
+    - _RimEnabled: 0
     - _RimPower: 4
     - _RimTexUV: 0
     - _RimWeight: 1
     - _Roughness: 1
+    - _SelfShadingSize: 0.505
+    - _SelfShadingSizeExtra: 0.6
+    - _ShadowEdgeSize: 0.344
+    - _ShadowEdgeSizeExtra: 0.05
     - _SmoothnessTextureChannel: 0
+    - _SpecularEnabled: 0
     - _SpecularHighlights: 1
     - _SpecularTint: 0
     - _Specularity: 1
@@ -202,7 +234,12 @@ Material:
     - _TeamColorMasksAsTint: 0
     - _TessellationMode: 0
     - _TessellationProperties: 0
+    - _TextureImpact: 1
     - _UVSec: 0
+    - _UnityShadowMode: 0
+    - _UnityShadowPower: 0.2
+    - _UnityShadowSharpness: 1
+    - _VertexColorsEnabled: 0
     - _WetMaskSource: 0
     - _WetMaskStrength: 1
     - _WetMaskUV: 0
@@ -214,6 +251,11 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 0.8207547, g: 0.56835896, b: 0.4452207, a: 1}
+    - _ColorDim: {r: 0.33962262, g: 0.17234078, b: 0.09131362, a: 1}
+    - _ColorDimCurve: {r: 0.85023, g: 0.85034, b: 0.85045, a: 0.85056}
+    - _ColorDimExtra: {r: 0.85023, g: 0.85034, b: 0.85045, a: 0.85056}
+    - _ColorDimSteps: {r: 0.85023, g: 0.85034, b: 0.85045, a: 0.85056}
+    - _ColorGradient: {r: 0.85023, g: 0.85034, b: 0.85045, a: 0.85056}
     - _DecalColor: {r: 1, g: 1, b: 1, a: 1}
     - _DetailAlbedoMapVelocity: {r: 0, g: 0, b: 0, a: 0}
     - _DirectionalBlendDirection: {r: 0, g: 1, b: 0, a: 0}
@@ -221,10 +263,13 @@ Material:
     - _DispTexVelocity: {r: 0, g: 0, b: 0, a: 0}
     - _DissolveGlowColor: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
+    - _FlatRimColor: {r: 0.85023, g: 0.85034, b: 0.85045, a: 0.85056}
+    - _FlatSpecularColor: {r: 0.85023, g: 0.85034, b: 0.85045, a: 0.85056}
     - _IncandescenceMapVelocity: {r: 0, g: 0, b: 0, a: 0}
     - _MainTexVelocity: {r: 0, g: 0, b: 0, a: 0}
     - _OrientedColor: {r: 1, g: 1, b: 1, a: 1}
     - _OrientedMainTexVelocity: {r: 0, g: 0, b: 0, a: 0}
+    - _OutlineColor: {r: 0.3773585, g: 0.14117885, b: 0.12281951, a: 1}
     - _RimColor: {r: 1, g: 1, b: 1, a: 1}
     - _RimTexVelocity: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
@@ -233,6 +278,7 @@ Material:
     - _TeamColor2: {r: 0, g: 0, b: 1, a: 1}
     - _TeamColor3: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _TeamColorMasks: {r: 1, g: 1, b: 1, a: 0}
+    - _UnityShadowColor: {r: 0.85023, g: 0.85034, b: 0.85045, a: 0.85056}
     - _WetMaskVelocity: {r: 0, g: 0, b: 0, a: 0}
     - _WetNormalMapVelocity: {r: 0, g: 0, b: 0, a: 0}
     - _WetTint: {r: 1, g: 1, b: 1, a: 1}

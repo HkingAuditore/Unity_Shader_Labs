@@ -90,7 +90,7 @@ Material:
     - _ExtrusionFactor: 0
     - _FurDensity: 1.03
     - _FurLength: 0.069
-    - _FurShading: 0.423
+    - _FurShading: 0.33
     - _FurThinness: 2.1
     - _GlossMapScale: 1
     - _Glossiness: 0
@@ -109,7 +109,7 @@ Material:
     - _RimPower: 0.576
     - _ShadowAdjust: 0.248
     - _ShadowRange: 0.155
-    - _Shininess: 0.822
+    - _Shininess: 0.82
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _Speed: 26.5
@@ -131,7 +131,7 @@ Material:
     - _ForceGlobal: {r: 0.73, g: 5.9, b: 0.22, a: 0}
     - _ForceLocal: {r: 5.5, g: 11.26, b: 5.19, a: 0}
     - _RimColor: {r: 0.030882852, g: 0.03773582, b: 0.027945867, a: 1}
-    - _ShadowColor: {r: 0.47074646, g: 0.8301887, b: 0.3250267, a: 1}
+    - _ShadowColor: {r: 0.41662607, g: 0.8584906, b: 0.23891956, a: 1}
     - _Specular: {r: 0.31132078, g: 0.31132078, b: 0.31132078, a: 1}
     - _TopColor: {r: 1, g: 1, b: 1, a: 1}
     - _WindColor: {r: 0.6132076, g: 0.21693665, b: 0.21693665, a: 1}

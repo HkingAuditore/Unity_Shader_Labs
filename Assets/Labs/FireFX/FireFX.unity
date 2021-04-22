@@ -356,7 +356,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 30.8
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -642,7 +642,7 @@ PrefabInstance:
     - target: {fileID: 7051631761225090800, guid: 15dc99ec7adf71b42b835a46f1848a38,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7051631761225090801, guid: 15dc99ec7adf71b42b835a46f1848a38,
         type: 3}

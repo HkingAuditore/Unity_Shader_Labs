@@ -1,0 +1,94 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+struct PosData
+{
+    float2 pos;
+    float radius;
+    float strength;
+};
+
+RWStructuredBuffer<PosData> dataBuffer;
+
+
+float pointCount;
+RWTexture2D<float4> Result;
+
+
+void DrawPixel(float2 pos,float4 col)
+{
+    Result[int2(pos)] += col;
+}
+
+void DrawCircular(float2 pos,float radius)
+{
+    for (int a=0;a<360;a++)
+    {
+       for(int r=0;r<radius*1.2;r++)
+       {
+           float2 curPos = float2(pos.x+r*cos(a),pos.y+r*sin(a));
+           if(r<radius)
+           {
+               DrawPixel(curPos,float4(1,1,1,1));
+           
+               DrawPixel(curPos+float2(1,0),float4(.25,.25,.25,.25));
+               DrawPixel(curPos+float2(0,1),float4(.25,.25,.25,.25));
+               DrawPixel(curPos+float2(-1,0),float4(.25,.25,.25,.25));
+               DrawPixel(curPos+float2(0,-1),float4(.25,.25,.25,.25));
+           
+               DrawPixel(curPos+float2(1,1),float4(.1,.1,.1,.1));
+               DrawPixel(curPos+float2(-1,1),float4(.1,.1,.1,.1));
+               DrawPixel(curPos+float2(1,-1),float4(.1,.1,.1,.1));
+               DrawPixel(curPos+float2(-1,-1),float4(.1,.1,.1,.1));
+
+           }else
+           {
+               DrawPixel(curPos,float4(.25,.25,.25,.25));
+           
+               DrawPixel(curPos+float2(1,0),float4(.1,.1,.1,.1));
+               DrawPixel(curPos+float2(0,1),float4(.1,.1,.1,.1));
+               DrawPixel(curPos+float2(-1,0),float4(.1,.1,.1,.1));
+               DrawPixel(curPos+float2(0,-1),float4(.1,.1,.1,.1));
+           
+               DrawPixel(curPos+float2(1,1),float4(.01,.01,.01,.01));
+               DrawPixel(curPos+float2(-1,1),float4(.01,.01,.01,.01));
+               DrawPixel(curPos+float2(1,-1),float4(.01,.01,.01,.01));
+               DrawPixel(curPos+float2(-1,-1),float4(.01,.01,.01,.01));
+
+           }
+
+       } 
+    }
+}
+
+float2 Circular(float2 cur,float2 pos,float radius,float strength)
+{
+    return  float2(distance(cur,pos) < radius ? 1 : 0,distance(cur,pos) < radius ? strength : 0);
+}
+
+
+[numthreads(8,8,1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+    // RWTexture2D<float4> CurResult;
+    float final=0;
+    float meta=0;
+    float transparent = 0;
+    for (int i=0;i<pointCount;i++)
+    {
+        float2 k = Circular(id.xy,dataBuffer[i].pos,dataBuffer[i].radius,dataBuffer[i].strength);
+        final += k.x;
+        float tmp = (distance(id.xy,dataBuffer[i].pos)-dataBuffer[i].radius);
+        meta += tmp > 0 ? clamp(2/tmp,0,1) : 0;
+        transparent = max(tmp > 0 ? dataBuffer[i].strength : 0, transparent) ;
+    }
+    meta = meta > 0.1 ? 1 : 0;
+    float4 col = lerp(float4(0,0,0,0), float4(1,1,1,1),smoothstep(0.0, 0.001, final))
+                    +lerp(float4(0,0,0,0), float4(1,1,1,1), smoothstep(0.0, 0.001, meta));
+    Result[id.xy] = float4(col.rgb,transparent);
+    
+     
+     // DrawCircular(dataBuffer[id.x].pos, dataBuffer[id.x].radius); 
+}

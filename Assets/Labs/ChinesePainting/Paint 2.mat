@@ -81,10 +81,10 @@ Material:
     - _Outline: 0.1
     - _OutlinePow: 0.49
     - _OutlineRange: 2.47
-    - _OutlineThred: 0.78
+    - _OutlineThred: 0.82
     - _OutsideNoiseWidth: 1.3
     - _Parallax: 0.02
-    - _Size: 0.06
+    - _Size: 0.01
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1

@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Cloud_FixedCloud 1
+  m_Shader: {fileID: 4800000, guid: eee07cb45eab18f488de7b4a2a3316b1, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: 3000
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _AOTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CloudRampTex:
+        m_Texture: {fileID: 2800000, guid: 8b59ff02dd3c89942942582f07d98885, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FurTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ShapeTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _CloudHeight: -1.08
+    - _CloudHeightThinness: 2.5
+    - _CloudSelfSpeed: 0
+    - _Cutoff: 0.01
+    - _FurDensity: 0.88
+    - _FurLength: 15.3
+    - _FurShading: 1.56
+    - _FurThinness: 6.11
+    - _RimPower: 0.298
+    - _Shininess: 2.5
+    - _WindAmplitude: 0
+    - _WindDistribution: 0
+    - _WindFrequency: 0
+    m_Colors:
+    - _AOColor: {r: 0.21962771, g: 0.21893913, b: 0.2264151, a: 0.6862745}
+    - _Color: {r: 0.1660668, g: 0.09229262, b: 0.3207547, a: 0.02745098}
+    - _CustomLightDir: {r: 25.86, g: 0, b: 3.6, a: 0}
+    - _ForceGlobal: {r: 0, g: 0, b: 0, a: 0}
+    - _ForceLocal: {r: 0, g: 0, b: 0, a: 0}
+    - _RimColor: {r: 0.25475872, g: 0.103150584, b: 0.3584906, a: 0.8862745}
+    - _ShadowColor: {r: 0.8039308, g: 0.7971698, b: 1, a: 0.84705883}
+    - _ViewColor: {r: 0.496351, g: 0.6312524, b: 0.735849, a: 0.48235294}
